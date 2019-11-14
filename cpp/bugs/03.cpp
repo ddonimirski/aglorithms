@@ -9,9 +9,9 @@ void pr(int v);
 
 int main()
 {
-    char mc[] = { 1,2 ,3 ,4};
+    char mc[] = {1, 2 ,3 ,4};
     int c = 0;
-    for (int iv = 0; iv < 4; iv++, pr(mc[iv]))
+    for (int iv = 0; iv < 4; iv++, pr(mc[iv])) // infinit loop with -O2
     {
         c += mc[iv];
         pr(c);
