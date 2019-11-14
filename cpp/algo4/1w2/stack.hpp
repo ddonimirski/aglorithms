@@ -4,7 +4,7 @@
 #include <array>
 #include <vector>
 #include <optional>
-
+#include "pr.hpp"
 
 template<class T, int N=20>
 struct array_policy
@@ -15,6 +15,8 @@ struct array_policy
     {
         if (size < N)
         {
+            log("push",size, v);
+
             cont[size++] = std::forward<T>(v);
         }
     }
