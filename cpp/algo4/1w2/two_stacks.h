@@ -11,13 +11,12 @@ static int to_int(std::string_view str, int& s)
     {
         switch(str[s])
         {
-            default: --s; return ret;
+            default: return ret;
             case '0': case '1': case '2': case '3': case '4':
             case '5': case '6': case '7': case '8': case '9':
             ret = 10 * ret + (str[s++]-'0');
         }
     }
-    --s;
     return ret;
 }
 
@@ -41,8 +40,8 @@ static int two_stacks(std::string_view str)
        return 0;
    };
 
-
-   for (int i = 0; i < str.size(); i++)
+   
+   for (int i = 0, step = 1; i < str.size(); i+=step, step=1)
    {
        char v = str[i];
        if (v == '(' || v == ' ')
@@ -64,11 +63,12 @@ static int two_stacks(std::string_view str)
        else //TODO: check input for errors
        {
             val.push(to_int(str, i));
+            step = 0;
        }
    }
 
    if (val.size() == 2)
-           val.push(comp());
+        val.push(comp());
 
    return *val.top();
 }

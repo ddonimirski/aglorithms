@@ -8,7 +8,7 @@ int main() {
         std::string str = "12345";
         int s = 0;
         assert(to_int(str, s) == 12345);
-        assert(s == str.size()-1);
+        assert(s == str.size());
         s = 0;
         char const* cstr = "12345";
         assert(to_int(cstr, s) == 12345);
@@ -16,15 +16,15 @@ int main() {
         s = 2;
         str = "  123";
         assert(to_int(str, s) == 123);
-        assert(s == str.size()-1);
+        assert(s == str.size());
         str = "  923 ";
         s = 2;
         assert(to_int(str, s) == 923);
-        assert(s == str.size()-2);
+        assert(s == str.size()-1);
         str = "  923+";
         s = 2;
         assert(to_int(str, s) == 923);
-        assert(s == str.size()-2);
+        assert(s == str.size()-1);
     }
     { //two_stacks
         std::string str = "(1 + 2)";
