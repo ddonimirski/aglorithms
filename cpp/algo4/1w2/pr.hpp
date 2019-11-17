@@ -1,6 +1,8 @@
 #if !defined PR_HPP
 #define PR_HPP
 #include <iostream>
+#include <array>
+
 
 template<class ...T>
 static void pr(T ...args)
