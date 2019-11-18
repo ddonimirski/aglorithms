@@ -1,31 +1,24 @@
-//#include "pr.hpp"
+#include "pr.hpp"
 #include <ostream>
 #include <iostream>
 #include <array>
 #include <vector>
+#include <list>
 
-template<class CONT>
-std::ostream& operator << (std::ostream& os, const CONT& arr)
-{
-    //os << '[' << ' ';
-    //for (auto const v: arr)
-    //    os << v << ' ';
-    //for (auto const& v: arr)
-    //    std::cout << v << ' ';
-    return os;
-}
-
+using std::cout;
 
 int main()
 {
     std::array arr = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+    cout << arr << '\n';
+
     std::vector vec = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+    cout << vec << '\n';
+
     int carr[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+    cout << carr << '\n';
 
-    std::cout << carr;
+    std::list ll = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+    cout << ll << '\n';
 
-    for (int i = 0; i < vec.size(); ++i)
-    {
-        std::cout << vec[i] << ' ' ;
-    }
 }
