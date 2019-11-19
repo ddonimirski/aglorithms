@@ -1,16 +1,11 @@
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import edu.princeton.cs.algs4.StdOut;
-//import edu.princeton.cs.algs4.StdRandom;
 
 public class Deque<Item> implements Iterable<Item> {
 
-    private Node<Item> head, tail;
+    private Node head, tail;
     private int size;
-
-    protected Node<Item> getHead() { return this.head; }
-    protected Node<Item> getTail() { return this.tail; }
-
 
     // construct an empty deque
     public Deque() {
@@ -30,7 +25,7 @@ public class Deque<Item> implements Iterable<Item> {
     public void addFirst(Item item) {
         if (item == null)
             throw new IllegalArgumentException("addFirst got null value");
-        Node<Item> tmp = new Node<>(item);
+        Node tmp = new Node(item);
         if (isEmpty()) {
             this.head = tmp;
             this.tail = tmp;
@@ -46,7 +41,7 @@ public class Deque<Item> implements Iterable<Item> {
     public void addLast(Item item) {
         if (item == null)
             throw new IllegalArgumentException("addLast got null value");
-        Node<Item> tmp = new Node<>(item);
+        Node tmp = new Node(item);
         if (isEmpty()) {
             this.head = tmp;
             this.tail = tmp;
@@ -92,7 +87,7 @@ public class Deque<Item> implements Iterable<Item> {
 
     // return an iterator over item in order from front to back
     public Iterator<Item> iterator() {
-        return new DequeIterator<Item>(this);
+        return new DequeIterator(this.head);
     }
 
 
@@ -103,59 +98,28 @@ public class Deque<Item> implements Iterable<Item> {
 
         try {
             deque.addFirst(null);
-        } catch(IllegalArgumentException exp) {
+        } catch (IllegalArgumentException exp) {
+            StdOut.println("cougth exception");
         }
 
         try {
             deque.addLast(null);
-        } catch(IllegalArgumentException exp) {
+        } catch (IllegalArgumentException exp) {
+            StdOut.println("cougth exception");
         }
 
         try {
           Integer item = deque.removeFirst();
-          assert false: "Exception should be thrown";
-        } catch(NoSuchElementException exp) {
+          assert false : "Exception should be thrown";
+        } catch (NoSuchElementException exp) {
+            StdOut.println("cougth exception");
         }
 
         try {
           Integer item = deque.removeLast();
-          assert false: "Exception should be thrown";
-        } catch(NoSuchElementException exp) {
-        }
-
-
-        deque.addFirst(1);
-        assert !deque.isEmpty() : "isEmpty() Failed";
-        assert deque.size() == 1 : "size() should be 1";
-
-        deque.addFirst(2);
-        assert !deque.isEmpty() : "isEmpty() Failed";
-        assert deque.size() == 2 : "size() should be 2";
-
-        {
-            Integer item = deque.removeFirst();
-            assert item == 1 : "should be 1";
-            assert !deque.isEmpty() : "isEmpty() Failed";
-            assert deque.size() == 1 : "size() should be 1";
-        }
-
-        {
-            Integer item = deque.removeLast();
-            assert item == 2 : "should be 2";
-            assert deque.isEmpty() : "isEmpty() Failed";
-            assert deque.size() == 0 : "size() should be 1";
-        }
-
-        try {
-          Integer item = deque.removeFirst();
-          assert false: "Exception should be thrown";
-        } catch(NoSuchElementException exp) {
-        }
-
-        try {
-          Integer item = deque.removeLast();
-          assert false: "Exception should be thrown";
-        } catch(NoSuchElementException exp) {
+          assert false : "Exception should be thrown";
+        } catch (NoSuchElementException exp) {
+            StdOut.println("cougth exception");
         }
 
         deque.addFirst(1);
@@ -166,30 +130,60 @@ public class Deque<Item> implements Iterable<Item> {
         assert !deque.isEmpty() : "isEmpty() Failed";
         assert deque.size() == 2 : "size() should be 2";
 
-        {
-            Integer item = deque.removeLast();
-            assert item == 2 : "should be 2";
-            assert deque.isEmpty() : "isEmpty() Failed";
-            assert deque.size() == 0 : "size() should be 1";
-        }
+        Integer item = deque.removeFirst();
+        assert item == 1 : "should be 1";
+        assert !deque.isEmpty() : "isEmpty() Failed";
+        assert deque.size() == 1 : "size() should be 1";
 
-        {
-            Integer item = deque.removeFirst();
-            assert item == 1 : "should be 1";
-            assert !deque.isEmpty() : "isEmpty() Failed";
-            assert deque.size() == 1 : "size() should be 1";
+        item = deque.removeLast();
+        assert item == 2 : "should be 2";
+        assert deque.isEmpty() : "isEmpty() Failed";
+        assert deque.size() == 0 : "size() should be 1";
+
+        try {
+          item = deque.removeFirst();
+          assert false : "Exception should be thrown";
+        } catch (NoSuchElementException exp) {
+            StdOut.println("cougth exception");
         }
 
         try {
-          Integer item = deque.removeFirst();
-          assert false: "Exception should be thrown";
-        } catch(NoSuchElementException exp) {
+          item = deque.removeLast();
+          assert false : "Exception should be thrown";
+        } catch (NoSuchElementException exp) {
+            StdOut.println("cougth exception");
+        }
+
+        deque.addFirst(1);
+        assert !deque.isEmpty() : "isEmpty() Failed";
+        assert deque.size() == 1 : "size() should be 1";
+
+        deque.addFirst(2);
+        assert !deque.isEmpty() : "isEmpty() Failed";
+        assert deque.size() == 2 : "size() should be 2";
+
+        item = deque.removeLast();
+        assert item == 2 : "should be 2";
+        assert deque.isEmpty() : "isEmpty() Failed";
+        assert deque.size() == 0 : "size() should be 1";
+
+        item = deque.removeFirst();
+        assert item == 1 : "should be 1";
+        assert !deque.isEmpty() : "isEmpty() Failed";
+        assert deque.size() == 1 : "size() should be 1";
+
+        try {
+          item = deque.removeFirst();
+          assert false : "Exception should be thrown";
+        } catch (NoSuchElementException exp) {
+            StdOut.println("cougth exception");
         }
 
         try {
-          Integer item = deque.removeLast();
-          assert false: "Exception should be thrown";
-        } catch(NoSuchElementException exp) {
+          item = deque.removeLast();
+          assert false : "Exception should be thrown";
+        } catch (NoSuchElementException exp) {
+            StdOut.println("cougth exception");
         }
 
         deque.addLast(3);
@@ -212,65 +206,54 @@ public class Deque<Item> implements Iterable<Item> {
         Iterator<Integer> iter = deque.iterator();
         int i = 1;
 
-        while(iter.hasNext()) {
-            Integer item = iter.next();
+        while (iter.hasNext()) {
+            item = iter.next();
             StdOut.println(item);
-            assert i == item: "iter failed";
+            assert i == item : "iter failed";
             i++;
         }
 
         i = 1;
 
-        while(!deque.isEmpty()) {
-            Integer item = deque.removeFirst();
+        while (!deque.isEmpty()) {
+            item = deque.removeFirst();
             StdOut.println(item);
-            assert i == item: "iter failed";
+            assert i == item : "iter failed";
         }
 
         StdOut.println("Deque OK");
     }
+
+    private class DequeIterator implements Iterator<Item> {
+
+        Node current;
+
+        public DequeIterator(Node head) {
+            this.current = head;
+        }
+
+        public Item next() {
+            if (current == null)
+                throw new NoSuchElementException("Dqeue is empty");
+            Item ret = this.current.data;
+            this.current = this.current.next;
+            return ret;
+        }
+
+        public boolean hasNext() {
+            return this.current != null;
+        }
+    }
+
+    private class Node {
+        Item data;
+        public Node next, prev;
+
+        public Node(Item data) {
+            this.data = data;
+            this.next = null;
+            this.prev = null;
+        }
+    }
 }
 
-class DequeIterator<Item> implements Iterator<Item> {
-
-    Node<Item> current;
-
-    public DequeIterator(Deque<Item> deque) {
-        if (deque == null)
-            throw new IllegalArgumentException("DequeIterator has got null value");
-        current = deque.getHead();
-    }
-
-    public Item next() {
-        if (current == null)
-            throw new NoSuchElementException("Dqeue is empty");
-        Item ret = current.getData();
-        current = current.getNext();
-        return ret;
-    }
-
-    public boolean hasNext() {
-        return current != null;
-    }
-}
-
-class Node<Item> {
-    Item data;
-    public Node<Item> next, prev;
-
-    public Node(Item data, Node<Item> next, Node<Item> prev) {
-        this.data = data;
-        this.next = next;
-        this.prev = prev;
-    }
-
-    public Node(Item data) {
-        this.data = data;
-        this.next = null;
-        this.prev = null;
-    }
-
-    Item getData() { return this.data; }
-    Node<Item> getNext() { return this.next; }
-    Node<Item> getPrev() { return this.prev; }
-}
