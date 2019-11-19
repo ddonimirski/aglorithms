@@ -5,8 +5,8 @@ import edu.princeton.cs.algs4.StdRandom;
 
 public class RandomizedQueue<Item> implements Iterable<Item> {
 
-    Item[] array;
-    int size;
+    private Item[] array;
+    private int size;
 
     // construct an empty randomized queue
     public RandomizedQueue() {
@@ -79,8 +79,8 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         }
     }
 
-    private Item[] createArray(int new_size) {
-        return (Item[]) new Object[new_size];
+    private Item[] createArray(int newSize) {
+        return (Item[]) new Object[newSize];
     }
 
     private class RandomizedQueueIterator implements Iterator<Item> {
@@ -98,12 +98,6 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
             this.current = 0;
         }
 
-        private void swap(int i, int j) {
-            int tmp = this.idArray[i];
-            this.idArray[i] = this.idArray[j];
-            this.idArray[j] = tmp;
-        }
-
         public Item next() {
             if (!hasNext())
                 throw new NoSuchElementException("there is no next");
@@ -115,4 +109,3 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         }
     }
 }
-
