@@ -1,0 +1,2 @@
+zip queue.zip Deque.java RandomizedQueue.java Permutation.class
+java-algs4 Permutation 7 < distinct.txt
