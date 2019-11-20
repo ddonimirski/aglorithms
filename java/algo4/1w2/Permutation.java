@@ -1,37 +1,28 @@
+import java.util.Iterator;
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.StdIn;
-import edu.princeton.cs.algs4.StdRandom;
 
 public class Permutation {
     public static void main(String[] args) {
         
         if (args.length != 1)
             throw new IllegalArgumentException("New give a number params");
+        int k = Integer.parseInt(args[0]);
+        if (k < 1)
+            return;
 
-        String[] perm = new String[Integer.parseInt(args[0])];
+        RandomizedQueue<String> queue = new RandomizedQueue<>();
 
-        for (int i = 0; i < perm.length; i++) {
-            if (StdIn.isEmpty())
-                throw new IllegalArgumentException("New give a number params");
-            perm[i] = StdIn.readString();
-        }
-
-        int i = 0;
-        for (; i < perm.length; i++) {
-            int r = StdRandom.uniform(i+1);
-            String tmp = perm[i];
-            perm[i] = perm[r];
-            perm[r] = tmp;
-        }
-
-        for (; !StdIn.isEmpty(); i++) {
-            int r = StdRandom.uniform(i+1);
+        while (!StdIn.isEmpty()) {
             String v = StdIn.readString();
-            if (r < perm.length) perm[r] = v;
+            if (k == queue.size())
+                queue.dequeue();
+            queue.enqueue(v);
         }
 
-        for (int j = 0; j < perm.length; j++) {
-            StdOut.println(perm[j]);
-        }
+        Iterator<String> iter = queue.iterator();
+        while (iter.hasNext())
+            StdOut.println(iter.next());
+
     }
 }

@@ -108,20 +108,6 @@ public class Deque<Item> implements Iterable<Item> {
             StdOut.println("cougth exception");
         }
 
-        try {
-          Integer item = deque.removeFirst();
-          assert false : "Exception should be thrown";
-        } catch (NoSuchElementException exp) {
-            StdOut.println("cougth exception");
-        }
-
-        try {
-          Integer item = deque.removeLast();
-          assert false : "Exception should be thrown";
-        } catch (NoSuchElementException exp) {
-            StdOut.println("cougth exception");
-        }
-
         deque.addFirst(1);
         assert !deque.isEmpty() : "isEmpty() Failed";
         assert deque.size() == 1 : "size() should be 1";

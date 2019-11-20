@@ -21,6 +21,9 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     // add the item
     public void enqueue(Item item) {
+        if (item == null)
+            throw new IllegalArgumentException("enqueue got null value");
+
         if (this.array.length == this.size)
         {
             Item[] tmp = createArray(this.array.length*2 + 1);
@@ -29,6 +32,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
             }
             this.array = tmp;
         }
+
         this.array[this.size++] = item;
     }
 
@@ -37,7 +41,19 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         if (isEmpty())
             throw new NoSuchElementException("RandomizedQueue is empty");
         swap(StdRandom.uniform(this.size), --this.size);
-        return this.array[this.size];
+
+        Item ret = this.array[this.size];
+
+        if (this.array.length/3 == this.size)
+        {
+            Item[] tmp = createArray(this.array.length/2 + 1);
+            for (int i = 0; i < this.size; i++) {
+                tmp[i] = this.array[i];
+            }
+            this.array = tmp;
+        }
+
+        return ret;
     }
 
     private void swap(int i, int j) {
@@ -50,12 +66,12 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     public Item sample() {
         if (isEmpty())
             throw new NoSuchElementException("RandomizedQueue is empty");
-        return this.array[StdRandom.uniform(this.array.length)];
+        return this.array[StdRandom.uniform(this.size)];
     }
 
     // return an independent iterator over items in random order
     public Iterator<Item> iterator() {
-        return new RandomizedQueueIterator(this);
+        return new RandomizedQueueIterator();
     }
 
     // unit testing (required)
@@ -88,11 +104,9 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         int current;
         int[] idArray;
 
-        public RandomizedQueueIterator(RandomizedQueue<Item> queue) {
-            if (queue == null)
-                throw new IllegalArgumentException("RandomizedQueueIterator has got null value");
-            this.idArray = new int[array.length];
-            for (int i = 0; i < array.length; i++)
+        public RandomizedQueueIterator() {
+            this.idArray = new int[size];
+            for (int i = 0; i < size; i++)
                 this.idArray[i] = i;
             StdRandom.shuffle(this.idArray);
             this.current = 0;
@@ -105,7 +119,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         }
 
         public boolean hasNext() {
-            return this.current < array.length;
+            return this.current < size;
         }
     }
 }
