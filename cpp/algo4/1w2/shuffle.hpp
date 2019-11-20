@@ -20,6 +20,7 @@ void suffle(CONT& arr)
     std::random_device rd;
     std::mt19937 gen(rd());
 
+
     for (int i = 0; i < arr.size(); ++i)
     {
         std::uniform_int_distribution<> dis(0, i);
@@ -27,5 +28,30 @@ void suffle(CONT& arr)
 
     }
 }
+
+
+template<class CONT>
+void suffle_part(CONT& arr, int size)
+{
+    std::random_device rd;
+    std::mt19937 gen(rd());
+
+    if (size > arr.size()) size = arr.size();
+
+    for (int i = 0; i < size; ++i)
+    {
+        std::uniform_int_distribution<> dis(0, i);
+
+    }
+
+
+    for (int i = 0; i < arr.size(); ++i)
+    {
+        std::uniform_int_distribution<> dis(0, i);
+        swap(arr, i, dis(gen));
+
+    }
+}
+
 
 #endif //SHUFFLE_HPP

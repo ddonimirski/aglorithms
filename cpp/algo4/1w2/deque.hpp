@@ -49,7 +49,7 @@ struct array_policy
 
         return ret;
     }
-}
+};
 
 template<class T, class P=array_policy<T,20>>
 struct deque

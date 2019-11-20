@@ -4,6 +4,7 @@
 #include <array>
 #include <vector>
 #include <list>
+#include <string>
 
 using std::cout;
 
@@ -20,5 +21,8 @@ int main()
 
     std::list ll = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
     cout << ll << '\n';
+    std::string const s = "noga \n";
+
+    pr(sep_t{'\n'}, "c array", carr, "std::array", arr, "std::vector", vec, "std::list", ll);
 
 }
