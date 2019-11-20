@@ -27,14 +27,18 @@ class MergeSort {
         //}
         if (hi <= lo) return;
         int mid = (lo + hi) / 2;
-        sort(arr, aux, lo, mid);
-        sort(arr, aux, mid+1, hi);
-        if (!less(arr[mid+1], arr[mid])) return; //already sorted so we can skip merge
+        sort(aux, arr, lo, mid);
+        sort(aux, arr, mid+1, hi);
+        if (!less(aux[mid+1], aux[mid])) return; //already sorted so we can skip merge
         merge(arr, aux, lo, mid, hi);
     }
 
     private static void sort(Comparable[] arr) {
         aux = new Comparable[a.length];
+        for (int i = 0; i < arr.length; i++) {
+            aux[i] = arr[i];
+        }
+
         sort(arr, aux, 0, a.length-1);
     }
 }
