@@ -1,5 +1,17 @@
 public class BruteCollinearPoints {
-    public BruteCollinearPoints(Point[] points)    // finds all line segments containing 4 points
-    public           int numberOfSegments()        // the number of line segments
-    public LineSegment[] segments()                // the line segments
+
+    private LineSegment[] lineSegments;;
+
+    public BruteCollinearPoints(Point[] points) {   // finds all line segments containing 4 points
+        if (points == null)
+            throw new IllegalArgumentException("BruteCollinearPoints has got null value");
+    }
+
+    public           int numberOfSegments() {       // the number of line segments
+        return this.lineSegments.length;
+    }
+
+    public LineSegment[] segments() {               // the line segments 
+        return this.lineSegments;
+    }
 }

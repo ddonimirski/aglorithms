@@ -1,3 +1,4 @@
+import java.util.Comparator;
 import java.util.NoSuchElementException;
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.StdRandom;
@@ -16,7 +17,7 @@ public class Point implements Comparable<Point> {
     public void draw() { StdDraw.point(x, y); }
 
     // draws the line segment from this point to that point
-    public void drawTo(Point that) { tdDraw.line(this.x, this.y, that.x, that.y); }
+    public void drawTo(Point that) { StdDraw.line(this.x, this.y, that.x, that.y); }
 
     // string reprezentation
     public String toString() { return "(" + x + ", " + y + ")"; }
@@ -33,7 +34,6 @@ public class Point implements Comparable<Point> {
     //         argument point
     public int compareTo(Point that) {
         if (this.x == that.x && this.y == that.y) return 0;
-
         if (this.y < that.y || (this.y == this.y && this.x < that.x)) return -1;
         return 1;
     }
@@ -51,15 +51,39 @@ public class Point implements Comparable<Point> {
         if (that.x == this.x && that.y == this.y) return Double.NEGATIVE_INFINITY;
         if (that.y == this.y) return +0.0;
         if (that.x == this.x) return Double.POSITIVE_INFINITY;
-        return (that.y - this.y) / (that.x - that.x);
+        if (this.x < that.x) return (that.y - this.y) / (that.x - this.x);
+        return (this.y - that.y) / (this.x - that.x);
     }
+
+    private static class Less implements Comparator<Point> {
+        public int compare (Point x1, Point x2) { return x1.compareTo(x2) < 0;  }
+    }
+    private static class Qual implements Comparator<Point> {
+        public int compare (Point x1, Point x2) { return x2.compareTo(x1) == 0; }
+    }
+    private static class Greater implements Comparator<Point> {
+        public int compare (Point x1, Point x2) { return x1.compareTo(x2) > 0; }
+    }
+    private static class SlopeOrder implements Comparator<Point> {
+        public int compare (Point x1, Point x2) {
+            return x1.slopeTo(zero) < x2.slopeTo(zero);
+        }
+    }
+
+    private final Point zero = new Point(0,0);
+    private final SlopeOrder fslopeOrder = new SlopeOder();
 
     // compare two point by  slopes they make with this point
     public Comparator<Point> slopeOrder() {
-        return null;
+        return this.fslopeOrder;
     }
 
+    // unit tests
     public static void main(String[] args) {
-        /* YOUR CODE HERE */
+        Point x1 = new Point(1,1);
+        Point x2 = new Point(2,2);
+
+        StdOut.println(x1.compareTo(x2)<0);
+        StdOut.println(x1.slopeTo(x2));
     }
 }
