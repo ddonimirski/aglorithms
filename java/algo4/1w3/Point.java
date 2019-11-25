@@ -55,23 +55,22 @@ public class Point implements Comparable<Point> {
         return (this.y - that.y) / (this.x - that.x);
     }
 
-    private static class Less implements Comparator<Point> {
-        public int compare (Point x1, Point x2) { return x1.compareTo(x2) < 0;  }
-    }
-    private static class Qual implements Comparator<Point> {
-        public int compare (Point x1, Point x2) { return x2.compareTo(x1) == 0; }
-    }
-    private static class Greater implements Comparator<Point> {
-        public int compare (Point x1, Point x2) { return x1.compareTo(x2) > 0; }
-    }
-    private static class SlopeOrder implements Comparator<Point> {
+    //private static class Less implements Comparator<Point> {
+    //    public boolean compare (Point x1, Point x2) { return x1.compareTo(x2) < 0;  }
+    //}
+    //private static class Qual implements Comparator<Point> {
+    //    public int compare (Point x1, Point x2) { return x2.compareTo(x1) == 0; }
+    //}
+    //private static class Greater implements Comparator<Point> {
+    //    public int compare (Point x1, Point x2) { return x1.compareTo(x2) > 0; }
+    //}
+    private static class SlopeOder implements Comparator<Point> {
         public int compare (Point x1, Point x2) {
-            return x1.slopeTo(zero) < x2.slopeTo(zero);
+            return (int)(x1.slopeTo(x1) - x2.slopeTo(x2));
         }
     }
 
-    private final Point zero = new Point(0,0);
-    private final SlopeOrder fslopeOrder = new SlopeOder();
+    private final SlopeOder fslopeOrder = new SlopeOder();
 
     // compare two point by  slopes they make with this point
     public Comparator<Point> slopeOrder() {
