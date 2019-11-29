@@ -1,3 +1,5 @@
+import java.util.Arrays;
+import java.util.ArrayList;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.StdIn;
@@ -16,84 +18,83 @@ public class BruteCollinearPoints {
                 throw new IllegalArgumentException("Points should not have nulls points");
         }
 
-        int mllsSize = 0;
-        LineSegment[] mlls = new LineSegment[2];
-        Point p, q, tmp;
-        for (int i = 0; i < points.length; ++i) {
-            p = points[i];
-            for (int j = i; j < points.length; ++j) {
-                q = points[j];
-                double slope = p.slopeTo(q);
-                if (slope == Double.NEGATIVE_INFINITY)
-                    continue;
-                if (p.compareTo(q) < 0)
-                {
-                    tmp = p;
-                    p = q;
-                    q = tmp;
-                }
-
-                for (int k = j ; k< points.length; ++k)
-                {
-                    tmp = points[k];
-                    double slop2 = p.slopeTo(tmp);
-                    if (slop2 != slope)
-                        continue;
-                    if (q.compareTo(tmp) < 0)
-                        q = tmp;
-                    else if (p.compareTo(tmp) > 0)
-                        p = tmp;
-                    else 
-                        continue;
-
-                    LineSegment ls_tmp = null;
-                    for (int l = k; l < points.length; ++l) {
-                        tmp = points[l];
-                        slop2 = p.slopeTo(q);
-                        if (slop2 != slope)
-                            continue;
-                        if (q.compareTo(tmp) < 0)
-                            q = tmp;
-                        else if (p.compareTo(tmp) > 0)
-                            p = tmp;
-                        else 
-                            continue;
-
-                        ls_tmp = new LineSegment(p, q);
-                    }
-
-                    if (ls_tmp != null) {
-                        String ls_s = ls_tmp.toString();
-                        if (mllsSize == mlls.length) {
-                            LineSegment[] lss = new LineSegment[2*(mllsSize)];
-                            for (int id = 0; id < mllsSize; ++id)
-                                lss[id] = mlls[id];
-                            mlls = lss;
-                        }
-                        boolean found = false;
-                        for (int id = 0; id < mllsSize; ++id)
-                        {
-                            if (mlls[id].toString() == ls_s) {
-                                found = true;
-                                break;
+        ArrayList<tmpLine> ls = new ArrayList<>();
+        tmpLine tl = new tmpLine();
+        Point t;
+        for (int i = 0; i < points.length-3; ++i) {
+            tl.p = points[i];
+            for (int j = i+1; j < points.length-2; ++j) {
+                double ij = points[i].slopeTo(points[j]);
+                tl.e = points[j];
+                if (less(tl.e, tl.p)) 
+                    swap(tl.e, tl.p);
+                for (int k = j+1; k< points.length-1; ++k) {
+                    double ik = points[i].slopeTo(points[k]);
+                    if (ij != ik) continue;
+                    t = points[k];
+                    if (less(t, tl.p)) swap(t, tl.p);
+                    if (less(tl.e, t)) swap(tl.e, t);
+                    int c = 0;
+                    for (int l = k+1; l < points.length; ++l) {
+                        double il = points[i].slopeTo(points[l]);
+                        if (ij != il) continue;
+                        c++;
+                        t = points[l];
+                        StdOut.print(t); StdOut.println("t");
+                        if (less(t, tl.p)) swap(t, tl.p);
+                        if (less(tl.e, t)) swap(tl.e, t);
+                        for (tmpLine v: ls) {
+                            if (tl.slope == v.slope) {
+                                c++;
+                                if (less(tl.p, v.p)) v.p = tl.p;
+                                if (less(v.e, tl.e)) v.e = tl.e;
                             }
                         }
-
-                        if (!found)
-                            mlls[mllsSize++] = ls_tmp;
+                        pr(ls);
                     }
+                    StdOut.println(c);
+                    if (c == 1) ls.add(tl);
                 }
             }
         }
 
-        this.lineSegments = new LineSegment[mllsSize];
-        copy(mlls, this.lineSegments);
+                        pr(ls);
+        this.lineSegments = new LineSegment[ls.size()];
+        int i = 0;
+        for (tmpLine v: ls) {
+            this.lineSegments[i++] = new LineSegment(v.p, v.e);
+        }
     }
 
-    private void copy(LineSegment[] src, LineSegment[] dst) {
-        for (int i = 0; i < dst.length; ++i) {
-            dst[i] = src[i];
+    private class tmpLine {
+        Point p;
+        Point e;
+        double slope;
+    }
+
+    private void pr(ArrayList<tmpLine> l) {
+        StdOut.println(">--");
+        for (tmpLine v: l) {
+            StdOut.println(new LineSegment(v.p, v.e));
         }
+        StdOut.println("<--");
+    }
+
+    private void swap(Point p1, Point p2) {
+        StdOut.print(p1);
+        StdOut.print(p2);
+        StdOut.println("swap");
+        Point tmp = p1;
+        p1 = p2;
+        p2 = tmp;
+    }
+
+    private boolean less(Point p1, Point p2) {
+        StdOut.print(p1);
+        StdOut.print("<");
+        StdOut.print(p2);
+        StdOut.println(p1.compareTo(p2) < 0);
+        return p1.compareTo(p2) < 0;
     }
 
 
@@ -103,6 +104,13 @@ public class BruteCollinearPoints {
 
     public LineSegment[] segments() {               // the line segments 
         return this.lineSegments;
+    }
+
+    private void pr(Point[] arr) {
+        for (int i = 0; i < arr.length; ++i) {
+            StdOut.print(arr[i]);
+        }
+        StdOut.println();
     }
 
     public static void main(String[] args) {
@@ -118,13 +126,13 @@ public class BruteCollinearPoints {
         }
 
         // draw the points
-        StdDraw.enableDoubleBuffering();
-        StdDraw.setXscale(0, 32768);
-        StdDraw.setYscale(0, 32768);
+//        StdDraw.enableDoubleBuffering();
+//        StdDraw.setXscale(0, 32768);
+//        StdDraw.setYscale(0, 32768);
         for (Point p : points) {
-            p.draw();
+//            p.draw();
         }
-        StdDraw.show();
+//        StdDraw.show();
 
 
         // print and draw the line segments
@@ -135,8 +143,8 @@ public class BruteCollinearPoints {
             return;
         for (LineSegment segment : seg) {
             StdOut.println(segment);
-            segment.draw();
+//            segment.draw();
         }
-        StdDraw.show();
+//        StdDraw.show();
     }
 }

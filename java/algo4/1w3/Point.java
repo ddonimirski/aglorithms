@@ -48,11 +48,11 @@ public class Point implements Comparable<Point> {
     // @param  that the other point
     // @return the slope between this point and the specified point
     public double slopeTo(Point that) {
-        if (that.x == this.x && that.y == this.y) return Double.NEGATIVE_INFINITY;
-        if (that.y == this.y) return +0.0;
-        if (that.x == this.x) return Double.POSITIVE_INFINITY;
-        if (this.x < that.x) return (that.y - this.y) / (that.x - this.x);
-        return (this.y - that.y) / (this.x - that.x);
+        if (that.x == this.x && that.y == this.y) { return Double.NEGATIVE_INFINITY;  }
+        if (that.y == this.y) { return +0.0; }
+        if (that.x == this.x) { return Double.POSITIVE_INFINITY; }
+        if (this.x < that.x) return ((double)that.y - this.y) / ((double)that.x - this.x);
+        return ((double)this.y - that.y) / ((double)this.x - that.x);
     }
 
     //private static class Less implements Comparator<Point> {
@@ -81,6 +81,12 @@ public class Point implements Comparable<Point> {
     public static void main(String[] args) {
         Point x1 = new Point(1,1);
         Point x2 = new Point(2,2);
+
+        StdOut.println(x1.compareTo(x2)<0);
+        StdOut.println(x1.slopeTo(x2));
+
+        x1 = new Point(18000,10000);
+        x2 = new Point(19000,10000);
 
         StdOut.println(x1.compareTo(x2)<0);
         StdOut.println(x1.slopeTo(x2));
