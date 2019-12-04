@@ -1,28 +1,10 @@
 #if !defined SORT_HPP
 #define SORT_HPP
 #include <array>
+#include "cmp.hpp"
 
 
-template<class CONT>
-void swap(CONT& arr, size_t i, size_t j)
-{
-    auto tmp = arr[i];
-    arr[i] = arr[j];
-    arr[j] = tmp;
-}
-
-
-struct less_c
-{
-    template<class T>
-    static bool cmp(T const& v1, T const& v2) 
-    {
-        return v1 < v2;
-    }
-};
-
-
-template<class CONT, class CMP=less_c>
+template<class CONT, class CMP=::less>
 void sort_selection(CONT& arr)
 {
     auto const N = arr.size();
@@ -32,7 +14,7 @@ void sort_selection(CONT& arr)
         int min = i;
         for (size_t j = i+1; j < N; ++j)
         {
-            if (CMP::cmp(arr[min], arr[j]))
+            if (CMP::compare(arr[min], arr[j]))
             {
                 min = j;
             }
@@ -42,7 +24,7 @@ void sort_selection(CONT& arr)
 }
 
 
-template<class CONT, class CMP=less_c>
+template<class CONT, class CMP=::less>
 void sort_insertion(CONT& arr)
 {
     auto const N = arr.size();
@@ -52,7 +34,7 @@ void sort_insertion(CONT& arr)
         {
             auto const k = j - 1;
 
-            if (CMP::cmp(arr[k], arr[j]))
+            if (CMP::compare(arr[k], arr[j]))
             {
                 swap(arr, k, j);
                 continue;
@@ -63,7 +45,7 @@ void sort_insertion(CONT& arr)
 }
 
 
-template<class CONT, class CMP=less_c>
+template<class CONT, class CMP=::less>
 void sort_shell(CONT& arr)
 {
     auto const N = arr.size();
@@ -79,7 +61,7 @@ void sort_shell(CONT& arr)
             for (int j = i; j > h-1; j -= h)
             {
                 auto const k = j - h;
-                if (CMP::cmp(arr[k], arr[j]))
+                if (CMP::compare(arr[k], arr[j]))
                 {
                     swap(arr, k, j);
                     continue;
