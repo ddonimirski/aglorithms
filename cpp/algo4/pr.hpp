@@ -4,6 +4,16 @@
 #include <array>
 
 template <class CONT>
+static void pr_contener(CONT&& cont, size_t s, size_t e)
+{
+    std::cout << '(' << s << ':' << e <<')' << '[' << ' ';
+    for (; s <= e; ++s) {
+        std::cout  << cont[s] << ' ';
+    }
+    std::cout << ']' << std::endl;
+} 
+
+template <class CONT>
 static void pr_cont(std::ostream& os, CONT&& cont)
 {
     os << '[' << ' ';

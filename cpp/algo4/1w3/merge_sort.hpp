@@ -8,6 +8,9 @@
 template<class CONT, class CONT2, class CMP=::less>
 void merge(CONT& arr, CONT2& aux, size_t l, size_t m, size_t h)
 {
+    if (l < m) assert(is_sorted(aux, l, m));
+    if (m+1 < h) assert(is_sorted(aux, m+1, h));
+
     size_t i = l, j = m+1;
     for (size_t k = l; k <= h; ++k)
     {
@@ -16,6 +19,8 @@ void merge(CONT& arr, CONT2& aux, size_t l, size_t m, size_t h)
         else if (CMP::compare(aux[j], aux[i]))  arr[k] = aux[j++];
         else                                    arr[k] = aux[i++];
     }
+
+    assert(is_sorted(arr, l, h));
 }
 
 
@@ -26,7 +31,7 @@ void sort_merge(CONT& arr, CONT2& aux, size_t l, size_t h)
     size_t m = (l + h) /2;
     sort_merge(aux, arr, l, m);
     sort_merge(aux, arr, m+1, h);
-    if (!CMP::compare(aux[m+1], aux[m])) return;
+    //if (CMP::compare(aux[m], aux[m+1])) return;
     ::merge(arr, aux, l, m, h);
 }
 
