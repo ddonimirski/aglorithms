@@ -3,3 +3,4 @@
 -Wall
 -pedantic
 -I.
+-I..

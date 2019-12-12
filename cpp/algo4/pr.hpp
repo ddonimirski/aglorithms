@@ -3,6 +3,7 @@
 #include <iostream>
 #include <array>
 
+
 template <class CONT>
 static void pr_contener(CONT&& cont, size_t s, size_t e)
 {
@@ -22,6 +23,27 @@ static void pr_cont(std::ostream& os, CONT&& cont)
     os << ']';
 } 
 
+
+template<class T>
+struct carr
+{
+    T const* arr;
+    const size_t n;
+
+    template<int N>
+    carr(T (&a)[N]):arr(a), n(N) {}
+
+    carr(T *a, size_t N): arr(a), n(N) {}
+
+    friend std::ostream& operator << (std::ostream& os, carr const& in)
+    {
+        os << '[' << ' ';
+        for (size_t i = 0; i < in.n; ++i)
+            os << in.arr[i] << ' ' ;
+        return os << ']';
+    }
+};
+
 template<class T, template<typename> class CONT>
 std::ostream& operator << (std::ostream& os, CONT<T> const& arr)
 {
@@ -29,7 +51,7 @@ std::ostream& operator << (std::ostream& os, CONT<T> const& arr)
     return os; 
 }
 
-template<class T, auto N>
+template<class T, int N>
 std::ostream& operator << (std::ostream& os, std::array<T, N> const& arr)
 {
     pr_cont(os, arr);
