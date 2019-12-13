@@ -4,10 +4,11 @@
 #include "../cmp.hpp"
 #include "../swap.hpp"
 
+
 template<class CONT, class CMP=::less>
-bool is_heap(CONT& arr)
+bool is_heap(CONT& arr, size_t N)
 {
-    const size_t N = arr.size()/2;
+    N /= 2;
     for (size_t p = 0; p < N; ++p)
     {
         auto const l = 2*p+1;
@@ -21,10 +22,22 @@ bool is_heap(CONT& arr)
     return true;
 }
 
+template<class T, size_t N, class CMP=::less>
+bool is_heap(T const (&arr)[N])
+{
+    return is_heap(arr, N);
+}
+
+
+template<class T, template<typename> class CONT, class CMP=::less>
+bool is_heap(CONT<T>& arr)
+{
+    return is_heap(arr, arr.size());
+}
+
 template<class CONT, class CMP=::less>
 void swim(CONT& arr, size_t k, size_t N)
 {
-    if (k >= N) return; // k out of range
     for (auto p = k/2; k > 0 && CMP::compare(arr[k], arr[p]); k=p, p=k/2) 
     {
         ::swap(arr, k, p);
@@ -38,13 +51,9 @@ void sink(CONT& arr, size_t k, size_t N)
     while (k < N/2)
     {
         auto i = 2*k+1;
-        if (i < N && CMP::compare(arr[i], arr[k]))
-        {
-            auto const n = i+1;
-            if (n < N && CMP::compare(arr[n], arr[i]))
-                ++i;
-            ::swap(arr, i, k);
-        }
+        if (i < N && CMP::compare(arr[i+1], arr[i])) ++i;
+        if (!CMP::compare(arr[i], arr[k])) break;
+        ::swap(arr, k, i);
         k = i;
     }
 }
