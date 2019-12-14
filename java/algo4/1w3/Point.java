@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.NoSuchElementException;
 import edu.princeton.cs.algs4.StdOut;
@@ -33,8 +34,9 @@ public class Point implements Comparable<Point> {
     //         point; and a positive integer if this point is greater than the
     //         argument point
     public int compareTo(Point that) {
+        if (that == null) throw new NullPointerException();
         if (this.x == that.x && this.y == that.y) return 0;
-        if (this.y < that.y || (this.y == this.y && this.x < that.x)) return -1;
+        if (this.y < that.y || (this.y == that.y && this.x < that.x)) return -1;
         return 1;
     }
 
@@ -55,9 +57,9 @@ public class Point implements Comparable<Point> {
         return ((double)this.y - that.y) / ((double)this.x - that.x);
     }
 
-    //private static class Less implements Comparator<Point> {
-    //    public boolean compare (Point x1, Point x2) { return x1.compareTo(x2) < 0;  }
-    //}
+    private static class Less implements Comparator<Point> {
+        public int compare (Point x1, Point x2) { return (x1.compareTo(x2) - 1);  }
+    }
     //private static class Qual implements Comparator<Point> {
     //    public int compare (Point x1, Point x2) { return x2.compareTo(x1) == 0; }
     //}
@@ -70,11 +72,24 @@ public class Point implements Comparable<Point> {
         }
     }
 
-    private final SlopeOder fslopeOrder = new SlopeOder();
+    private final static Less less = new Less();
+    private final static SlopeOder fslopeOrder = new SlopeOder();
 
     // compare two point by  slopes they make with this point
     public Comparator<Point> slopeOrder() {
-        return this.fslopeOrder;
+        return fslopeOrder;
+    }
+
+
+    private static void pr(Point[] a) {
+        StdOut.print("Point:");
+        for (int i=0; i < a.length; ++i) {
+            if (a[i] == null)
+                continue;
+            StdOut.print(a[i]);
+            StdOut.print(' ');
+        }
+        StdOut.println();
     }
 
     // unit tests
@@ -85,10 +100,21 @@ public class Point implements Comparable<Point> {
         StdOut.println(x1.compareTo(x2)<0);
         StdOut.println(x1.slopeTo(x2));
 
-        x1 = new Point(18000,10000);
-        x2 = new Point(19000,10000);
+        x1 = new Point(10000,0);
+        x2 = new Point(3000,7000);
 
         StdOut.println(x1.compareTo(x2)<0);
         StdOut.println(x1.slopeTo(x2));
+
+        Point[] arr = new Point[3];
+        arr[0] = new Point(10000, 0);
+        arr[1] = new Point(0, 10000);
+        arr[2] = new Point(3000, 7000);
+
+        StdOut.println(arr[0].compareTo(arr[2]));
+        StdOut.println(arr[0].compareTo(arr[1]));
+
+        Arrays.sort(arr,Point.less);
+        pr(arr);
     }
 }

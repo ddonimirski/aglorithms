@@ -1,5 +1,10 @@
 import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Enumeration;
+import java.util.Collection;
+import java.util.Arrays;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.StdIn;
@@ -8,6 +13,25 @@ import edu.princeton.cs.algs4.StdDraw;
 public class BruteCollinearPoints {
 
     private LineSegment[] lineSegments;
+
+    private void print(Point[] points) {
+        for (Point p: points) {
+            StdOut.print(p);
+            StdOut.print(' ');
+        }
+        StdOut.println();
+    }
+
+    private void swap(Point l, Point r) {
+        Point t = l;
+        l = r;
+        r = t;
+    }
+
+    private boolean less(Point l, Point r) {
+        return l.compareTo(r) < 0;
+    }
+
 
     public BruteCollinearPoints(Point[] points) {   // finds all line segments containing 4 points
         if (points == null)
@@ -18,83 +42,34 @@ public class BruteCollinearPoints {
                 throw new IllegalArgumentException("Points should not have nulls points");
         }
 
-        ArrayList<tmpLine> ls = new ArrayList<>();
-        tmpLine tl = new tmpLine();
-        Point t;
+        print(points);
+        ArrayList<LineSegment> arr_tmp = new ArrayList<LineSegment>();
+
         for (int i = 0; i < points.length-3; ++i) {
-            tl.p = points[i];
+            Point left = points[i];
             for (int j = i+1; j < points.length-2; ++j) {
-                double ij = points[i].slopeTo(points[j]);
-                tl.e = points[j];
-                if (less(tl.e, tl.p)) 
-                    swap(tl.e, tl.p);
-                for (int k = j+1; k< points.length-1; ++k) {
-                    double ik = points[i].slopeTo(points[k]);
-                    if (ij != ik) continue;
-                    t = points[k];
-                    if (less(t, tl.p)) swap(t, tl.p);
-                    if (less(tl.e, t)) swap(tl.e, t);
-                    int c = 0;
+                Point right = points[j];
+                if (less(right, left)) swap(left ,right);
+                double slope = left.slopeTo(right);
+                for (int k = j+1; k < points.length-1; ++k) {
+                    Point tmp = points[k];
+                    if (less(tmp, left)) swap(tmp, left);
+                    double slope_tmp = left.slopeTo(tmp);
+                    if (slope != slope_tmp) continue;
+                    if (less(right, tmp)) swap(tmp, right);
                     for (int l = k+1; l < points.length; ++l) {
-                        double il = points[i].slopeTo(points[l]);
-                        if (ij != il) continue;
-                        c++;
-                        t = points[l];
-                        StdOut.print(t); StdOut.println("t");
-                        if (less(t, tl.p)) swap(t, tl.p);
-                        if (less(tl.e, t)) swap(tl.e, t);
-                        for (tmpLine v: ls) {
-                            if (tl.slope == v.slope) {
-                                c++;
-                                if (less(tl.p, v.p)) v.p = tl.p;
-                                if (less(v.e, tl.e)) v.e = tl.e;
-                            }
-                        }
-                        pr(ls);
+                        tmp = points[l];
+                        if (less(tmp, left)) swap(tmp, left);
+                        slope_tmp = left.slopeTo(tmp);
+                        if (slope != slope_tmp) continue;
+                        if (less(right, tmp)) swap(tmp, right);
+                        arr_tmp.add(new LineSegment(left, right));
                     }
-                    StdOut.println(c);
-                    if (c == 1) ls.add(tl);
                 }
             }
         }
 
-                        pr(ls);
-        this.lineSegments = new LineSegment[ls.size()];
-        int i = 0;
-        for (tmpLine v: ls) {
-            this.lineSegments[i++] = new LineSegment(v.p, v.e);
-        }
-    }
-
-    private class tmpLine {
-        Point p;
-        Point e;
-        double slope;
-    }
-
-    private void pr(ArrayList<tmpLine> l) {
-        StdOut.println(">--");
-        for (tmpLine v: l) {
-            StdOut.println(new LineSegment(v.p, v.e));
-        }
-        StdOut.println("<--");
-    }
-
-    private void swap(Point p1, Point p2) {
-        StdOut.print(p1);
-        StdOut.print(p2);
-        StdOut.println("swap");
-        Point tmp = p1;
-        p1 = p2;
-        p2 = tmp;
-    }
-
-    private boolean less(Point p1, Point p2) {
-        StdOut.print(p1);
-        StdOut.print("<");
-        StdOut.print(p2);
-        StdOut.println(p1.compareTo(p2) < 0);
-        return p1.compareTo(p2) < 0;
+        lineSegments = arr_tmp.toArray(new LineSegment[arr_tmp.size()]);
     }
 
 
