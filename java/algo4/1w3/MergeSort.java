@@ -2,15 +2,19 @@ import java.lang.Comparable;
 import edu.princeton.cs.algs4.StdOut;
 
 class MergeSort {
-    private static void merge(Comparable[] arr, Comparable[] aux, int  lo, int mid, int hi)
+    private static boolean isSorted(Comparable[] arr, int b, int e) {
+        for (;b+1 < e; b++) {
+            if (!less(arr[b], arr[b+1])) {
+                return false;
+            }
+        }
+        return true;
+    }
+    private static void merge(comparable[] arr, Comparable[] aux, int  lo, int mid, int hi)
     {
-        //assert isSorted(arr, lo, mid): "should be sorted";
-        //assert isSorted(arr, mid+1, hi): "should be sorted";
+        assert isSorted(arr, lo, mid): "should be sorted";
+        assert isSorted(arr, mid+1, hi): "should be sorted";
 
-        // not neeeded -> swap arrays
-        //for (int k = lo; k <= hi; ++k) {
-        //    aux[k] = arr[k];
-        //}
 
         int i = lo, j = mid+1;
         for (int k = lo; k <= hi; ++k)
@@ -23,15 +27,15 @@ class MergeSort {
     }
 
     private static void sort(Comparable[] arr, Comparable[] aux, int lo, int hi) {
-        //if (hi <= lo + CUTOFF - 1) {
-        //    Insertion.sort(arr, lo, hi);
-        //    return;
-        //}
+        // if (hi <= lo + CUTOFF - 1) {
+        //     Insertion.sort(arr, lo, hi);
+        //     return;
+        // }
         if (hi <= lo) return;
         int mid = (lo + hi) / 2;
         sort(aux, arr, lo, mid);
         sort(aux, arr, mid+1, hi);
-        if (!less(aux[mid+1], aux[mid])) return; //already sorted so we can skip merge
+        if (!less(aux[mid+1], aux[mid])) return; // already sorted so we can skip merge
         merge(arr, aux, lo, mid, hi);
     }
 
@@ -44,8 +48,8 @@ class MergeSort {
         sort(arr, aux, 0, arr.length-1);
     }
 
-    private static void pr(Integer[] arr) {
-        for (Integer v: arr) {
+    private static void pr(int[] arr) {
+        for (int v: arr) {
             StdOut.print(v);
         }
         StdOut.println();
@@ -63,11 +67,8 @@ class MergeSort {
         }
     }
 
-
-
-
     public static void main(String[] args) {
-        Integer[] arr = new Integer[] {2,5,6,8,9,4,1,3,7};
+        int[] arr = new int[] {2, 5, 6, 8, 9, 4, 1, 3, 7};
         pr(arr);
         sort(arr);
         pr(arr);
