@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.util.ArrayList;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
@@ -7,76 +8,39 @@ public class BruteCollinearPoints {
 
     private final LineSegment[] lineSegments;
 
-    public BruteCollinearPoints(Point[] points) {
-        if (points == null)
+    public BruteCollinearPoints(Point[] ppoints) {
+        if (ppoints == null)
             throw new IllegalArgumentException("BruteCollinearPoints has got null value");
 
-        for (int i = 0; i < points.length; ++i) {
-            if (points[i] == null)
+        for (int i = 0; i < ppoints.length; ++i) {
+            if (ppoints[i] == null)
                 throw new IllegalArgumentException("Points should not have nulls points");
         }
 
+        Point[] points = ppoints.clone();
+        Arrays.sort(points);
+        check(points);
         ArrayList<LineSegment> arr = new ArrayList<LineSegment>();
 
         for (int i = 0; i < points.length-3; ++i) {
             Point left = points[i];
 
             for (int j = i+1; j < points.length-2; ++j) {
-                Point right = points[j];
-                if (less(right, left)) {
-                    Point t = left;
-                    left = right;
-                    right = t;
-                }
 
-                double slope = left.slopeTo(right);
+                Point tmp = points[j];
+                double slope = left.slopeTo(tmp);
                 for (int k = j+1; k < points.length-1; ++k) {
-                    Point tmp = points[k];
-                    double slopeTmp;
-                    if (less(left, tmp))
-                        slopeTmp = left.slopeTo(tmp);
-                    else
-                        slopeTmp = tmp.slopeTo(left);
+                    tmp = points[k];
+                    double slopeTmp = left.slopeTo(tmp);
+                    if (Double.compare(slope, slopeTmp) != 0) continue;
 
-                    if (slope != slopeTmp) continue;
-
-                    if (less(tmp, left)) {
-                        Point t = tmp;
-                        tmp = left;
-                        left = t;
-                    }
-
-                    if (less(right, tmp)) {
-                        Point t = tmp;
-                        tmp = right;
-                        right = t;
-                    }
-                    int c = 3;
                     for (int ll = k+1; ll < points.length; ++ll) {
                         tmp = points[ll];
+                        slopeTmp = left.slopeTo(tmp);
 
-                        if (less(left, tmp))
-                            slopeTmp = left.slopeTo(tmp);
-                        else
-                            slopeTmp = tmp.slopeTo(left);
+                        if (Double.compare(slope, slopeTmp) != 0) continue;
 
-                        if (slope != slopeTmp) continue;
-
-                        if (less(tmp, left)) {
-                            Point t = tmp;
-                            tmp = left;
-                            left = t;
-                        }
-
-                        if (less(right, tmp)) {
-                            Point t = tmp;
-                            tmp = right;
-                            right = t;
-                        }
-                        c++;
-                    }
-                    if (c >= 4) {
-                        arr.add(new LineSegment(left, right));
+                        arr.add(new LineSegment(left, tmp));
                     }
                 }
             }
@@ -85,8 +49,13 @@ public class BruteCollinearPoints {
         this.lineSegments = arr.toArray(new LineSegment[arr.size()]);
     }
 
-    private boolean less(Point p1, Point p2) {
-        return p1.compareTo(p2) < 0;
+    private void check(Point[] points) {
+        // must be sorted
+        for (int i = 0; i < points.length-1; ++i) {
+            if (points[i].compareTo(points[i+1]) == 0) {
+                throw new IllegalArgumentException("Found duplicates");
+            }
+        }
     }
 
     public int numberOfSegments() {       // the number of line segments

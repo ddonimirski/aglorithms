@@ -16,40 +16,47 @@ public class FastCollinearPoints {
                 throw new IllegalArgumentException("FastCollinearPoints has got null value");
         }
 
-        ArrayList<LineSegment> arr = new ArrayList<LineSegment>();
 
-        int c = 0;
-        for (int i = 0; i < points.length-1; ++i) {
-            Arrays.sort(points);
-            Point left = points[i];
-            Arrays.sort(points, left.slopeOrder());
-            Point right = points[i+1];
-            if (less(right, left)) {
-                Point t = left;
-                left = right;
-                right = t;
-            }
-            final double slope = left.slopeTo(right);
-            c = 2;
-            for (int j = i + 2; j < points.length; ++j) {
-                Point tmp = points[j];
-                if (slope == left.slopeTo(tmp)) {
-                    ++c;
-                    if (less(tmp, left)) {
-                        left = tmp;
-                    }
-                    if (less(right, tmp)) {
-                        right = tmp;
+        Point[] pPoints = points.clone();
+        Arrays.sort(pPoints);
+        check(pPoints);
+        Point[] sPoints = points.clone();
+        ArrayList<LineSegment> ls = new ArrayList<LineSegment>();
+
+        for (int i = 0; i < pPoints.length; ++i) {
+            Point left = pPoints[i];
+            Arrays.sort(sPoints, left.slopeOrder());
+
+            int j = 1;
+            while (j < sPoints.length) {
+
+                final double SLOPE = left.slopeTo(sPoints[j]);
+                ArrayList<Point> arr = new ArrayList<Point>();
+
+                do {
+                    arr.add(sPoints[j++]);
+                } while (j < sPoints.length && 0 == Double.compare(left.slopeTo(sPoints[j]), SLOPE));
+
+                if (arr.size() >= 3) {
+                    Point[] pp = arr.toArray(new Point[arr.size()]);
+                    Arrays.sort(pp);
+                    if (less(left, pp[0])) {
+                        ls.add(new LineSegment(left, pp[arr.size()-1]));
                     }
                 }
             }
-            if (c >= 4) {
-                arr.add(new LineSegment(left, right));
-            }
         }
 
+        this.lineSegments = ls.toArray(new LineSegment[ls.size()]);
+    }
 
-        this.lineSegments = arr.toArray(new LineSegment[arr.size()]);
+    private void check(Point[] points) {
+        // must be sorted
+        for (int i = 0; i < points.length-1; ++i) {
+            if (points[i].compareTo(points[i+1]) == 0) {
+                throw new IllegalArgumentException("Found duplicates");
+            }
+        }
     }
 
     public           int numberOfSegments() {       // the number of line segments
