@@ -1,39 +1,13 @@
-import java.util.Arrays;
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Enumeration;
-import java.util.Collection;
-import java.util.Arrays;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
-import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.StdDraw;
 
 public class BruteCollinearPoints {
 
-    private LineSegment[] lineSegments;
+    private final LineSegment[] lineSegments;
 
-    private void print(Point[] points) {
-        for (Point p: points) {
-            StdOut.print(p);
-            StdOut.print(' ');
-        }
-        StdOut.println();
-    }
-
-    private void swap(Point l, Point r) {
-        Point t = l;
-        l = r;
-        r = t;
-    }
-
-    private boolean less(Point l, Point r) {
-        return l.compareTo(r) < 0;
-    }
-
-
-    public BruteCollinearPoints(Point[] points) {   // finds all line segments containing 4 points
+    public BruteCollinearPoints(Point[] points) {
         if (points == null)
             throw new IllegalArgumentException("BruteCollinearPoints has got null value");
 
@@ -42,50 +16,86 @@ public class BruteCollinearPoints {
                 throw new IllegalArgumentException("Points should not have nulls points");
         }
 
-        print(points);
-        ArrayList<LineSegment> arr_tmp = new ArrayList<LineSegment>();
+        ArrayList<LineSegment> arr = new ArrayList<LineSegment>();
 
         for (int i = 0; i < points.length-3; ++i) {
             Point left = points[i];
+
             for (int j = i+1; j < points.length-2; ++j) {
                 Point right = points[j];
-                if (less(right, left)) swap(left ,right);
+                if (less(right, left)) {
+                    Point t = left;
+                    left = right;
+                    right = t;
+                }
+
                 double slope = left.slopeTo(right);
                 for (int k = j+1; k < points.length-1; ++k) {
                     Point tmp = points[k];
-                    if (less(tmp, left)) swap(tmp, left);
-                    double slope_tmp = left.slopeTo(tmp);
-                    if (slope != slope_tmp) continue;
-                    if (less(right, tmp)) swap(tmp, right);
-                    for (int l = k+1; l < points.length; ++l) {
-                        tmp = points[l];
-                        if (less(tmp, left)) swap(tmp, left);
-                        slope_tmp = left.slopeTo(tmp);
-                        if (slope != slope_tmp) continue;
-                        if (less(right, tmp)) swap(tmp, right);
-                        arr_tmp.add(new LineSegment(left, right));
+                    double slopeTmp;
+                    if (less(left, tmp))
+                        slopeTmp = left.slopeTo(tmp);
+                    else
+                        slopeTmp = tmp.slopeTo(left);
+
+                    if (slope != slopeTmp) continue;
+
+                    if (less(tmp, left)) {
+                        Point t = tmp;
+                        tmp = left;
+                        left = t;
+                    }
+
+                    if (less(right, tmp)) {
+                        Point t = tmp;
+                        tmp = right;
+                        right = t;
+                    }
+                    int c = 3;
+                    for (int ll = k+1; ll < points.length; ++ll) {
+                        tmp = points[ll];
+
+                        if (less(left, tmp))
+                            slopeTmp = left.slopeTo(tmp);
+                        else
+                            slopeTmp = tmp.slopeTo(left);
+
+                        if (slope != slopeTmp) continue;
+
+                        if (less(tmp, left)) {
+                            Point t = tmp;
+                            tmp = left;
+                            left = t;
+                        }
+
+                        if (less(right, tmp)) {
+                            Point t = tmp;
+                            tmp = right;
+                            right = t;
+                        }
+                        c++;
+                    }
+                    if (c >= 4) {
+                        arr.add(new LineSegment(left, right));
                     }
                 }
             }
         }
 
-        lineSegments = arr_tmp.toArray(new LineSegment[arr_tmp.size()]);
+        this.lineSegments = arr.toArray(new LineSegment[arr.size()]);
     }
 
+    private boolean less(Point p1, Point p2) {
+        return p1.compareTo(p2) < 0;
+    }
 
     public int numberOfSegments() {       // the number of line segments
         return this.lineSegments.length;
     }
 
-    public LineSegment[] segments() {               // the line segments 
-        return this.lineSegments;
-    }
 
-    private void pr(Point[] arr) {
-        for (int i = 0; i < arr.length; ++i) {
-            StdOut.print(arr[i]);
-        }
-        StdOut.println();
+    public LineSegment[] segments() {               // the line segments 
+        return this.lineSegments.clone();
     }
 
     public static void main(String[] args) {
@@ -101,25 +111,24 @@ public class BruteCollinearPoints {
         }
 
         // draw the points
-//        StdDraw.enableDoubleBuffering();
-//        StdDraw.setXscale(0, 32768);
-//        StdDraw.setYscale(0, 32768);
+        StdDraw.enableDoubleBuffering();
+        StdDraw.setXscale(0, 32768);
+        StdDraw.setYscale(0, 32768);
         for (Point p : points) {
-//            p.draw();
+            p.draw();
         }
-//        StdDraw.show();
+        StdDraw.show();
 
 
         // print and draw the line segments
         BruteCollinearPoints collinear = new BruteCollinearPoints(points);
-
         LineSegment[] seg  = collinear.segments();
         if (seg == null)
             return;
         for (LineSegment segment : seg) {
             StdOut.println(segment);
-//            segment.draw();
+            segment.draw();
         }
-//        StdDraw.show();
+        StdDraw.show();
     }
 }

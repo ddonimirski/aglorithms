@@ -1,13 +1,11 @@
-import java.util.Arrays;
 import java.util.Comparator;
-import java.util.NoSuchElementException;
 import edu.princeton.cs.algs4.StdOut;
-import edu.princeton.cs.algs4.StdRandom;
 import edu.princeton.cs.algs4.StdDraw;
 
 public class Point implements Comparable<Point> {
     private final int x;
     private final int y;
+
 
     public Point(int x, int y) {
         this.x = x;
@@ -26,7 +24,6 @@ public class Point implements Comparable<Point> {
     // Compares two points by y-coordinate, breaking ties by x-coordinate.
     // Formally, the invoking point (x0, y0) is less than the argument point
     // (x1, y1) if and only if either y0 < y1 or if y0 = y1 and x0 < x1.
-    //
     // @param  that the other point
     // @return the value <tt>0</tt> if this point is equal to the argument
     //         point (x0 = x1 and y0 = y1);
@@ -46,64 +43,50 @@ public class Point implements Comparable<Point> {
     // +0.0 if the line segment connecting the two points is horizontal;
     // Double.POSITIVE_INFINITY if the line segment is vertical;
     // and Double.NEGATIVE_INFINITY if (x0, y0) and (x1, y1) are equal.
-    //
     // @param  that the other point
     // @return the slope between this point and the specified point
     public double slopeTo(Point that) {
-        if (that.x == this.x && that.y == this.y) { return Double.NEGATIVE_INFINITY;  }
-        if (that.y == this.y) { return +0.0; }
-        if (that.x == this.x) { return Double.POSITIVE_INFINITY; }
-        if (this.x < that.x) return ((double)that.y - this.y) / ((double)that.x - this.x);
-        return ((double)this.y - that.y) / ((double)this.x - that.x);
+        if (that.x == this.x && that.y == this.y) {
+            return Double.NEGATIVE_INFINITY;
+        }
+
+        if (that.y == this.y) {
+            return +0.0;
+        }
+
+        if (that.x == this.x) {
+            return Double.POSITIVE_INFINITY;
+        }
+
+        if (this.x < that.x) return ((double) that.y - this.y) / ((double) that.x - this.x);
+        return ((double) this.y - that.y) / ((double) this.x - that.x);
     }
 
     private static class Less implements Comparator<Point> {
-        public int compare (Point x1, Point x2) { return (x1.compareTo(x2) - 1);  }
-    }
-    //private static class Qual implements Comparator<Point> {
-    //    public int compare (Point x1, Point x2) { return x2.compareTo(x1) == 0; }
-    //}
-    //private static class Greater implements Comparator<Point> {
-    //    public int compare (Point x1, Point x2) { return x1.compareTo(x2) > 0; }
-    //}
-    private static class SlopeOder implements Comparator<Point> {
-        public int compare (Point x1, Point x2) {
-            return (int)(x1.slopeTo(x1) - x2.slopeTo(x2));
-        }
+        public int compare(Point x1, Point x2) { return (x1.compareTo(x2) - 1);  }
     }
 
-    private final static Less less = new Less();
-    private final static SlopeOder fslopeOrder = new SlopeOder();
 
     // compare two point by  slopes they make with this point
     public Comparator<Point> slopeOrder() {
-        return fslopeOrder;
+        return (Point p, Point q) -> {
+            return Double.compare(slopeTo(p), slopeTo(q));
+        };
     }
 
-
-    private static void pr(Point[] a) {
-        StdOut.print("Point:");
-        for (int i=0; i < a.length; ++i) {
-            if (a[i] == null)
-                continue;
-            StdOut.print(a[i]);
-            StdOut.print(' ');
-        }
-        StdOut.println();
-    }
 
     // unit tests
     public static void main(String[] args) {
-        Point x1 = new Point(1,1);
-        Point x2 = new Point(2,2);
+        Point x1 = new Point(1, 1);
+        Point x2 = new Point(2, 2);
 
-        StdOut.println(x1.compareTo(x2)<0);
+        StdOut.println(x1.compareTo(x2) < 0);
         StdOut.println(x1.slopeTo(x2));
 
-        x1 = new Point(10000,0);
-        x2 = new Point(3000,7000);
+        x1 = new Point(10000, 0);
+        x2 = new Point(3000, 7000);
 
-        StdOut.println(x1.compareTo(x2)<0);
+        StdOut.println(x1.compareTo(x2) < 0);
         StdOut.println(x1.slopeTo(x2));
 
         Point[] arr = new Point[3];
@@ -114,7 +97,5 @@ public class Point implements Comparable<Point> {
         StdOut.println(arr[0].compareTo(arr[2]));
         StdOut.println(arr[0].compareTo(arr[1]));
 
-        Arrays.sort(arr,Point.less);
-        pr(arr);
     }
 }
