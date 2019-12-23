@@ -6,15 +6,16 @@ import java.util.LinkedList;
 
 public class Solver {
 
-    private boolean isSolvable;
-    private MinPQ<Node> queue;
-    private Node solutionNode;
+    private final Node solutionNode;
 
     // find a solution to the initial board (using the A* algorithm)
     public Solver(Board initial) {
 
-        solutionNode = null;
-        queue = new MinPQ<>();
+        if (initial == null) {
+            throw new IllegalArgumentException();
+        }
+
+        MinPQ<Node> queue = new MinPQ<>();
         queue.insert(new Node(initial, 0, null));
 
         while (queue.size() > 0) {
@@ -22,18 +23,15 @@ public class Solver {
             Node currNode = queue.delMin();
             Board currBoard = currNode.getBoard();
 
-            //StdOut.print("get min");
-            //StdOut.print(currBoard);
+            // StdOut.print("get min");
+            // StdOut.print(currBoard);
 
             if (currBoard.isGoal()) {
-                this.isSolvable = true;
-                this.solutionNode = currNode;
-                break;
+                solutionNode = currNode;
+                return;
             }
 
             if (currBoard.twin().isGoal()) {
-                this.isSolvable = false;
-                this.solutionNode = null;
                 break;
             }
 
@@ -41,28 +39,28 @@ public class Solver {
             Board prevBoard = moves > 0 ? currNode.prev().getBoard() : null;
 
             for (Board next : currBoard.neighbors()) {
-                if (prevBoard != null && next.equals(prevBoard)) {
-                    continue;
-                }
-                //StdOut.println("add new");
+                if (next.equals(prevBoard)) continue;
+                // StdOut.println("add new");
                 queue.insert(new Node(next, moves+1, currNode));
             }
         }
+
+        solutionNode = null;
     }
 
     // is the initial board solvable? (see below)
     public boolean isSolvable() {
-        return isSolvable;
+        return solutionNode != null;
     }
 
     // min number of moves to solve initial board
     public int moves() {
-        return isSolvable() ? solutionNode.moves(): -1;
+        return isSolvable() ? solutionNode.moves() : -1;
     }
 
     // sequence of boards in a shortest solution
     public Iterable<Board> solution() {
-        if (!isSolvable) { return null; }
+        // if (!isSolvable()) { return null; }
 
         Deque<Board> solution = new LinkedList<>();
         Node node = solutionNode;

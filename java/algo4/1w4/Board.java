@@ -1,10 +1,6 @@
-import edu.princeton.cs.algs4.StdRandom;
 import edu.princeton.cs.algs4.StdOut;
-import edu.princeton.cs.algs4.MinPQ;
 import edu.princeton.cs.algs4.In;
-import java.lang.String;
 import java.util.LinkedList;
-import java.util.ArrayList;
 import java.util.List;
 
 public class Board {
@@ -16,6 +12,11 @@ public class Board {
     // create a board from an n-by-n array of tiles,
     // where tiles[row][col] = tile at (row, col)
     public Board(int[][] tiles) {
+
+        if (tiles == null || tiles.length < 2 || tiles[0].length < 2) {
+            throw new IllegalArgumentException();
+        }
+
         this.tiles = clone(tiles);
         final int N = this.tiles.length;
         for (int i = 0; i < N; ++i) {
@@ -31,14 +32,14 @@ public class Board {
     // string representation of this board
     public String toString() {
         final int N = this.dimension();
-        String ret = String.format("%d\n", N);
+        StringBuilder ret = new StringBuilder(String.format("%d\n", N));
         for (int i = 0; i < N; ++i) {
             for (int j = 0; j < N; ++j) {
-                ret +=  String.format(" %d", this.tiles[i][j]);
+                ret.append(String.format(" %d", this.tiles[i][j]));
             }
-            ret = ret + "\n";
+            ret.append("\n");
         }
-        return ret;
+        return ret.toString();
     }
 
     // board dimension n
@@ -52,11 +53,11 @@ public class Board {
         int ret = 0;
         int v = 1;
         for (int i = 0; i < N; ++i) {
-            for (int j = 0; j < N; ++j) {
-                if (v++ != this.tiles[i][j]) {
-                    if (this.row == N-1 && this.col == N-1 && this.tiles[i][j] == 0) {
-                        continue;
-                    }
+            for (int j = 0; j < N; ++j, ++v) {
+                if (v != this.tiles[i][j] && this.tiles[i][j] != 0) {
+                    // if (this.row == N-1 && this.col == N-1 && this.tiles[i][j] == 0) {
+                    //     continue;
+                    // }
                     ret++;
                 }
             }
@@ -66,18 +67,47 @@ public class Board {
 
     // sum of Manhattan distances between tiles and goal
     public int manhattan() {
-        final int N = this.dimension();
+        final int N = dimension();
         if (0 == N) return 0;
-        return 2*(N - 1) - (row + col);
+        int v = 1;
+        int m = 0;
+        for (int r = 0; r < N; ++r) {
+            for (int c = 0; c < N; ++c, ++v) {
+                if (tiles[r][c] == 0 || tiles[r][c] == v) continue;
+                final int rv = (tiles[r][c]-1) / N;
+                final int cv = (tiles[r][c]-1) % N;
+                final int vv = Math.abs(rv - r) + Math.abs(cv - c);
+                // StdOut.print("\nAdd:");
+                // StdOut.print("[");
+                // StdOut.print(r);
+                // StdOut.print("]");
+                // StdOut.print("[");
+                // StdOut.print(c);
+                // StdOut.print("]");
+                // StdOut.print(tiles[r][c]);
+                // StdOut.print(" != ");
+                // StdOut.print(v);
+                // StdOut.print(", ");
+                // StdOut.print("[");
+                // StdOut.print(rv);
+                // StdOut.print("]");
+                // StdOut.print("[");
+                // StdOut.print(cv);
+                // StdOut.print("]");
+                // StdOut.println(vv);
+                m += vv;
+            }
+        }
+        return m;
     }
 
     // is this board the goal board?
     public boolean isGoal() {
-        int c = 1;
+        int v = 1;
         final int N = this.dimension();
         for (int i = 0; i < N; ++i) {
-            for (int j = 0; j < N; ++j) {
-                if (c++ != this.tiles[i][j]) {
+            for (int j = 0; j < N; ++j, ++v) {
+                if (v != this.tiles[i][j]) {
                     return i == N-1 && j == N-1;
                 }
             }
@@ -91,15 +121,12 @@ public class Board {
             return false;
         if (this == y) return true;
         final int N = this.dimension();
-        Board b = (Board)y;
+        Board b = (Board) y;
         if (this.col != b.col || this.row != b.row)
             return false;
         for (int i = 0; i < N; ++i) {
             for (int j = 0; j < N; ++j) {
                 if (b.tiles[i][j] != this.tiles[i][j]) {
-                    StdOut.print(this.tiles[i][j]);
-                    StdOut.print(' ');
-                    StdOut.println(b.tiles[i][j]);
                     return false;
                 }
             }
@@ -108,7 +135,7 @@ public class Board {
     }
 
     private static int[][] clone(int[][] in) {
-        if (in == null) return new int[0][0];
+        // if (in == null) return in;
 
         int[][] arr = new int[in.length][];
         for (int i = 0; i < in.length; ++i) {
@@ -117,13 +144,13 @@ public class Board {
         return arr;
     }
 
-    private void swap(int[][] tiles, int r1, int c1, int r2, int c2) {
-        int v = tiles[r1][c1];
-        tiles[r1][c1] = tiles[r2][c2];
-        tiles[r2][c2] = v;
+    private void swap(int[][] t, int r1, int c1, int r2, int c2) {
+        int v = t[r1][c1];
+        t[r1][c1] = t[r2][c2];
+        t[r2][c2] = v;
 
-        //StdOut.print("swap");
-        //StdOut.println(this);
+        // StdOut.print("swap");
+        // StdOut.println(this);
     }
 
     // all neighboring boards
@@ -161,20 +188,11 @@ public class Board {
 
     // a board that is obtained by exchanging any pair of tiles
     public Board twin() {
-        final int N = this.dimension();
         int [][] tt = clone(this.tiles);
-
-        int r = StdRandom.uniform(N);
-        int c = StdRandom.uniform(N);
-
-        if (r > 0) {
-            swap(tt, r, c, r-1, c);
-        } else if (c > 0) {
-            swap(tt, r, c, r, c-1);
-        } else if (r < N-1) {
-            swap(tt, r, c, r+1, c);
-        } else if (c < N-1) {
-            swap(tt, r, c, r, c+1);
+        if (tiles[0][0] != 0 && tiles[0][1] != 0) {
+            swap(tt, 0, 0, 0, 1);
+        } else {
+            swap(tt, 1, 0, 1, 1);
         }
 
         return new Board(tt);
@@ -192,11 +210,17 @@ public class Board {
                 tiles[i][j] = in.readInt();
         Board board = new Board(tiles);
 
+        StdOut.println("board:");
         StdOut.println(board);
+        StdOut.print("dimention: ");
         StdOut.println(board.dimension());
+        StdOut.print("isGoal: ");
         StdOut.println(board.isGoal());
+        StdOut.print("equals: ");
         StdOut.println(board.equals(new Board(tiles)));
+        StdOut.print("manhattan: ");
         StdOut.println(board.manhattan());
+        StdOut.print("hamming: ");
         StdOut.println(board.hamming());
 
         for (Board b: board.neighbors()) {
