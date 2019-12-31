@@ -3,3 +3,7 @@
 !*.c
 !*.h
 !*.go
+*.class
+*.zip
+*.tar.gz
+*.log
