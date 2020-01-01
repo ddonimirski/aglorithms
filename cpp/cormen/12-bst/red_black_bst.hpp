@@ -3,6 +3,7 @@
 
 #include <numeric>
 #include <iostream>
+#include <cassert>
 #include "storage.hpp"
 
 
@@ -20,9 +21,9 @@ struct red_black_bst {
 
         node(): key{}, val{} {} // TODO: consider left not initialized
 
-        node(K& k, V& v, id_type p=id_type(), id_type l=id_type(), id_type r=id_type())
-            : key{k}, val{v}, parent{p}, left{l}, right{r}
-        {}
+        node(K const& k, V const& v) : key{k}, val{v} { }
+
+        node(node const& n): key{n.key}, val{n.val} {}
 
         bool is_red() const noexcept { return is_on(parent); }
         void set_red() noexcept { on(parent); } 
@@ -48,53 +49,68 @@ struct red_black_bst {
         return const_cast<red_black_bst&>(*this)[id];
     }
 
-    void add(K&& k, V&& v) {
-
+    void add(K const& k, V const& v) {
         if (is_NIL(root)) {
 
             auto const id = storage.alloc();
-            storage[id] = node{k,v};
+            storage[id] = node{k, v};
 
             root = id;
             return;
         }
 
-        auto next = root;
+        std::cout << "root " << root << '\n';
+        root = add(root, k, v);
+    }
 
-        while (!is_NIL(next)) {
-
-            if (storage[next].key < k) {
-                if (is_NIL(storage[next].right)) {
-                    auto const id = storage.alloc();
-                    storage[id] = node{k,v};
-                    storage[id].parent = next;
-                    storage[next].right = id;
-                    break;
-                }
-                next = storage[next].right;
-            }
-            else if (storage[next].key > k) {
-                if (is_NIL(storage[next].left)) {
-                    auto const id = storage.alloc();
-                    storage[id] = node{k,v};
-                    storage[id].parent = next;
-                    storage[next].left = id;
-                    break;
-                }
-                next = storage[next].left;
-            }
-            else {
-                storage[next].val = v;
-                break;
-            }
+    id_type add(id_type h, K const& k, V const& v) {
+        std::cout << "h " << h << '\n';
+        if (is_NIL(h)) {
+            std::cout << "new\n";
+            auto const id = storage.alloc();
+            storage[id] = node{k, v};
+            std::cout << id << " set red\n";
+            storage[id].set_red();
+            std::cout << "id " << id << ' ' << storage[id] << '\n';
+            return id;
         }
+
+        if (k < storage[h].key) {
+            storage[h].left = add(storage[h].left, k, v);
+            storage[storage[h].left].parent = h;
+        } else if (k > storage[h].key) {
+            storage[h].right = add(storage[h].right, k, v);
+            storage[storage[h].right].parent = h;
+        } else {
+            storage[h].val = v;
+        }
+
+        //if (!is_NIL(storage[h].right) && !is_NIL(storage[h].left)
+        //    && storage[storage[h].right].is_red() && !storage[storage[h].left].is_red())
+        //    h = rotate_left(h);
+        //if (!is_NIL(storage[h].left) && !is_NIL(storage[storage[h].left].left)
+        //    && storage[storage[h].left].is_red() && storage[storage[storage[h].left].left].is_red())
+        //    h = rotate_right(h);
+        //if (!is_NIL(storage[h].right) && !is_NIL(storage[h].left)
+        //    && storage[storage[h].left].is_red() && storage[storage[h].right].is_red())
+        //    filp_color(h);
+
+        return h;
+    }
+
+    void set_root(id_type x) {
+        storage[x].parent = id_type{};
+        root = x;
     }
 
 
-    void rotate_left(id_type h) {
+    id_type rotate_left(id_type h) {
         auto& head = storage[h];
         auto const x  = head.right;
+        assert(!is_NIL(x));
+
         auto& node = storage[x];
+        assert(node.is_red());
 
         head.right = node.left;
         head.parent = x;
@@ -102,13 +118,41 @@ struct red_black_bst {
         node.copy_color(head);
         head.set_red();
 
-        if (h == root) {
-            root = x;
-            storage[root].parent = id_type{};
-        }
+        return x;
     }
 
-    void rotate_right(id_type h) {
+
+    id_type rotate_right(id_type h) {
+        auto& head = storage[h];
+        auto const x  = head.left;
+        assert(!is_NIL(x));
+
+        auto& node = storage[x];
+        assert(node.is_red());
+
+        head.left = node.right;
+        head.parent = x;
+        node.right = h;
+        node.copy_color(head);
+        head.set_red();
+
+        return x;
+    }
+
+    void filp_color(id_type h) {
+        auto& head = storage[h];
+        assert(!is_NIL(head.left) && !is_NIL(head.right));
+
+        auto& left_node = storage[head.left];
+        auto& right_node = storage[head.right];
+
+        assert(!head.is_red());
+        assert(left_node.is_red());
+        assert(right_node.is_red());
+
+        head.set_red();
+        left_node.set_black();
+        right_node.set_black();
     }
 
 

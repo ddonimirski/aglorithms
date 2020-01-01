@@ -11,10 +11,6 @@ struct id_type {
     id_type(inner_type id=NIL): __id{id} {}
     operator inner_type() const { return (__id & NIL); }
 
-    id_type& operator = (id_type const& src) {
-        __id = src;
-        return *this;
-    }
 
     id_type operator++ () {
         ++__id;
@@ -57,11 +53,20 @@ struct storage_type {
     constexpr static unsigned capacity = N;
 
     id_type __free;
+
+#if defined UNION_PORTION
     union portion {
         id_type next;
         NODE node;
         portion(): next{} {}
-    } arr[N];
+    };
+#else
+    struct portion {
+        id_type next;
+        NODE node;
+    };
+#endif
+    portion arr[N];
 
     storage_type(): __free{0u} {
         static_assert(N < id_type::NIL, "");

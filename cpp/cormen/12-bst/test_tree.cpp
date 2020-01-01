@@ -1,7 +1,7 @@
-#include "tree.hpp"
-#include "red_black_bst.hpp"
 #include <iostream>
 #include <cassert>
+#include "tree.hpp"
+#include "red_black_bst.hpp"
 
 using std::cout, std::endl;
 
@@ -29,23 +29,12 @@ void test_red_black_bst() {
     auto test_add_first_node = [&rb]() {
         rb.add(1, 10);
         rb.add(3, 30);
-        rb.add(2, 20);
-        rb.add(4, 40);
+        //rb.add(4, 40);
+        //rb.add(2, 20);
     };
     test_add_first_node();
 
-    auto test_red_black = [&rb]() {
-        rb[3].set_red();
-    };
-    test_red_black();
-
-    auto test_rotate = [&rb]() {
-        rb.rotate_left(1);
-    };
-    test_rotate();
-
     cout << rb << endl;
-
 }
 
 int main() {
