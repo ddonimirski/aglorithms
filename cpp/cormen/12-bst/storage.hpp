@@ -23,7 +23,7 @@ struct id_type_t {
     operator inner_type() const { return (get_id(__id)); }
 
     id_type_t(id_type_t const&) = default; // copy all
-    id_type_t(id_type_t&&) = delete;
+    //id_type_t(id_type_t&&) = delete;
 
     // might this oprator should be deleted 
     id_type_t& operator = (id_type_t const& id) noexcept {

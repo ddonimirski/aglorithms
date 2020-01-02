@@ -46,13 +46,19 @@ struct red_black_bst {
         return storage[id];
     }
 
+    node const& operator[] (id_type const& id) const {
+        return const_cast<red_black_bst&>(*this)[id];
+    }
+
     bool is_RED(id_type id) {
         if (is_NIL(id)) return false;
         return  storage[id].is_red();
     }
 
-    node const& operator[] (id_type const& id) const {
-        return const_cast<red_black_bst&>(*this)[id];
+    void set_root(id_type x) {
+        // root always has NIL parent and black
+        storage[x].parent.set_NIL();
+        root = x;
     }
 
     void add(K const& k, V const& v) {
@@ -99,11 +105,48 @@ struct red_black_bst {
         return h;
     }
 
-    void set_root(id_type x) {
-        // root always has NIL parent and black
-        storage[x].parent.set_NIL();
-        root = x;
+
+    void del(K const& k) {
+        //TODO: add checking if tree contains  the key
+        
+        // if both children of root are black, set root to red
+        if (!is_RED(storage[root].left) && !is_RED(storage[root].right)) {
+            storage[root].set_red();
+        }
+
+        // back to normal :P
+        set_root(del(root, k));
     }
+
+
+    id_type del(id_type h, K const& k) {
+        if (k < storage[h].key) {
+            if (!is_RED(storage[h].left) && !is_RED(storage[storage[h].left].left)) {
+                h = mv_red_left(h);
+            }
+            storage[h].left = del(storage[h].left, k);
+        }
+        else {
+            if (is_RED(storage[h].left)) {
+                h = rotate_left(storage[h].left);
+            }
+            if (k == storage[h].key && is_NIL(storage[h].right)) {
+                return id_type{};
+            }
+            if (!is_RED(storage[h].right) && !is_RED(storage[storage[h].right].left)) {
+                h = mv_red_right(h);
+            }
+            if (k == storage[h].key == 0) {
+
+                storage[h].right = del_min(storage[h].right);
+            }
+            else {
+                storage[h].right = del(storage[h].right, k);
+            }
+        }
+        return balance(h);
+    }
+
 
     id_type rotate_left(id_type h) {
 
@@ -155,6 +198,60 @@ struct red_black_bst {
         head.set_red();
         left_node.set_black();
         right_node.set_black();
+    }
+
+
+    id_type del_min(id_type h) {
+        return h;
+    }
+
+    id_type del_max(id_type h) {
+        return h;
+    }
+
+    id_type balance(id_type h) {
+        return h;
+    }
+
+
+    id_type mv_red_left(id_type h) {
+        return h;
+    }
+
+    id_type mv_red_right(id_type h) {
+        return h;
+    }
+
+    K min() const {
+        if (auto const id = min(root); !is_NIL(id)) {
+            return storage[id].key;
+        }
+
+        //TODO: throw
+        return K{};
+    }
+
+    id_type min(id_type h) const {
+        assert(!is_NIL(h));
+        if (is_NIL(storage[h].left)) return h;
+        return min(storage[h].left);
+    }
+
+
+    K max() const {
+        if (auto const id = max(root); !is_NIL(id)) {
+            return storage[id].key;
+        }
+
+        //TODO: throw
+        return K{};
+    }
+
+
+    id_type max(id_type h) const {
+        assert(!is_NIL(h));
+        if (is_NIL(storage[h].right)) return h;
+        return min(storage[h].right);
     }
 
 
