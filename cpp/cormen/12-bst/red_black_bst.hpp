@@ -18,7 +18,6 @@ struct red_black_bst {
         K key;
         V val;
 
-
         node(): key{}, val{} {} // TODO: consider left not initialized
 
         node(K const& k, V const& v) : key{k}, val{v} { }
@@ -28,7 +27,7 @@ struct red_black_bst {
         bool is_red() const noexcept { return is_on(parent); }
         void set_red() noexcept { on(parent); } 
         void set_black() noexcept { off(parent); } 
-        void copy_color(node const& n) noexcept { copy_on(n.parent, parent); }
+        void copy_color(node const& n) noexcept { copy_flags(parent, n.parent); }
 
         friend std::ostream& operator << (std::ostream& os, node const& n) {
             os << '[' << n.is_red() << ':' << n.parent << ' ' << n.left << ',' << n.right << ']' << ' ';
@@ -36,13 +35,20 @@ struct red_black_bst {
         }
     };
 
+
     id_type root;
     storage_type<node, N> storage;
 
+    // TODO: fancy constructors
     //red_black_bst() { }
 
     node& operator[] (id_type const& id) {
         return storage[id];
+    }
+
+    bool is_RED(id_type id) {
+        if (is_NIL(id)) return false;
+        return  storage[id].is_red();
     }
 
     node const& operator[] (id_type const& id) const {
@@ -51,27 +57,21 @@ struct red_black_bst {
 
     void add(K const& k, V const& v) {
         if (is_NIL(root)) {
-
             auto const id = storage.alloc();
             storage[id] = node{k, v};
-
             root = id;
             return;
         }
 
-        std::cout << "root " << root << '\n';
-        root = add(root, k, v);
+        set_root(add(root, k, v));
     }
 
     id_type add(id_type h, K const& k, V const& v) {
-        std::cout << "h " << h << '\n';
         if (is_NIL(h)) {
-            std::cout << "new\n";
             auto const id = storage.alloc();
             storage[id] = node{k, v};
-            std::cout << id << " set red\n";
+            // new node is always red :p
             storage[id].set_red();
-            std::cout << "id " << id << ' ' << storage[id] << '\n';
             return id;
         }
 
@@ -85,26 +85,28 @@ struct red_black_bst {
             storage[h].val = v;
         }
 
-        //if (!is_NIL(storage[h].right) && !is_NIL(storage[h].left)
-        //    && storage[storage[h].right].is_red() && !storage[storage[h].left].is_red())
-        //    h = rotate_left(h);
-        //if (!is_NIL(storage[h].left) && !is_NIL(storage[storage[h].left].left)
-        //    && storage[storage[h].left].is_red() && storage[storage[storage[h].left].left].is_red())
-        //    h = rotate_right(h);
-        //if (!is_NIL(storage[h].right) && !is_NIL(storage[h].left)
-        //    && storage[storage[h].left].is_red() && storage[storage[h].right].is_red())
-        //    filp_color(h);
+
+        if (is_RED(storage[h].right) && !is_RED(storage[h].left)) {
+            h = rotate_left(h);
+        }
+        if (is_RED(storage[h].left) && is_RED(storage[storage[h].left].left)) {
+            h = rotate_right(h);
+        }
+        if (is_RED(storage[h].right) && is_RED(storage[h].left)) {
+            flip_color(h);
+        }
 
         return h;
     }
 
     void set_root(id_type x) {
-        storage[x].parent = id_type{};
+        // root always has NIL parent and black
+        storage[x].parent.set_NIL();
         root = x;
     }
 
-
     id_type rotate_left(id_type h) {
+
         auto& head = storage[h];
         auto const x  = head.right;
         assert(!is_NIL(x));
@@ -139,7 +141,7 @@ struct red_black_bst {
         return x;
     }
 
-    void filp_color(id_type h) {
+    void flip_color(id_type h) {
         auto& head = storage[h];
         assert(!is_NIL(head.left) && !is_NIL(head.right));
 
