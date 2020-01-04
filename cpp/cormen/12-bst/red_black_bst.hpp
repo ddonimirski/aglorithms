@@ -27,6 +27,7 @@ struct red_black_bst {
         bool is_red() const noexcept { return is_on(parent); }
         void set_red() noexcept { on(parent); } 
         void set_black() noexcept { off(parent); } 
+        void flip_color() noexcept { flip(parent); } 
         void copy_color(node const& n) noexcept { copy_flags(parent, n.parent); }
 
         friend std::ostream& operator << (std::ostream& os, node const& n) {
@@ -47,8 +48,13 @@ struct red_black_bst {
     }
 
     node const& operator[] (id_type const& id) const {
-        return const_cast<red_black_bst&>(*this)[id];
+        return storage[id];
     }
+
+//
+//    node const& operator[] (id_type const& id) const {
+//        return const_cast<red_black_bst&>(*this)[id];
+//    }
 
     bool is_RED(id_type id) {
         if (is_NIL(id)) return false;
@@ -99,7 +105,7 @@ struct red_black_bst {
             h = rotate_right(h);
         }
         if (is_RED(storage[h].right) && is_RED(storage[h].left)) {
-            flip_color(h);
+            flip_colors(h);
         }
 
         return h;
@@ -184,7 +190,7 @@ struct red_black_bst {
         return x;
     }
 
-    void flip_color(id_type h) {
+    void flip_colors(id_type h) {
         auto& head = storage[h];
         assert(!is_NIL(head.left) && !is_NIL(head.right));
 
@@ -195,9 +201,12 @@ struct red_black_bst {
         assert(left_node.is_red());
         assert(right_node.is_red());
 
-        head.set_red();
-        left_node.set_black();
-        right_node.set_black();
+        //head.set_red();
+        //left_node.set_black();
+        //right_node.set_black();
+        head.flip_color();
+        left_node.flip_color();
+        right_node.flip_color();
     }
 
 
@@ -210,15 +219,37 @@ struct red_black_bst {
     }
 
     id_type balance(id_type h) {
+        if (is_RED(storage[h].right)) {
+            h = rotate_left(h);
+        }
+        if (is_RED(storage[h].left) && id_RED(storage[storage[h].left].left)) {
+            h = rotate_right(h);
+        }
+        if (is_RED(storage[h].left) && is_RED(storage[h].right)) {
+            flip_colors(h);
+        }
         return h;
     }
 
 
     id_type mv_red_left(id_type h) {
+        // assert (h != NIL);
+        // is_RED(h) && !is_RED(storage[h].left) && 
+        flip_colors(h);
+        if (is_RED(storage[storage[h].right].left)) {
+            storage[h].right = rotate_right(storage[h].right);
+            h = rotate_left(h);
+            flip_colors(h);
+        }
         return h;
     }
 
     id_type mv_red_right(id_type h) {
+        flip_colors(h);
+        if (is_RED(storage[storage[h].left].left)) {
+            h = rotate_right(h);
+            flip_colors(h);
+        }
         return h;
     }
 
@@ -237,7 +268,6 @@ struct red_black_bst {
         return min(storage[h].left);
     }
 
-
     K max() const {
         if (auto const id = max(root); !is_NIL(id)) {
             return storage[id].key;
@@ -247,11 +277,10 @@ struct red_black_bst {
         return K{};
     }
 
-
     id_type max(id_type h) const {
         assert(!is_NIL(h));
         if (is_NIL(storage[h].right)) return h;
-        return min(storage[h].right);
+        return max(storage[h].right);
     }
 
 

@@ -47,6 +47,8 @@ void test_red_black_bst() {
     test_add_first_node();
 
     cout << rb << endl;
+    cout << rb.min() << endl;
+    cout << rb.max() << endl;
 }
 
 int main() {

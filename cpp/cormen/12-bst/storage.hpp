@@ -57,6 +57,11 @@ struct id_type_t {
         return id;
     }
 
+    friend inline id_type_t& flip(id_type_t& id) {
+        id.__id = ((~id.__id) & FLG) | (id.__id & NIL);
+        return id;
+    }
+
     friend inline void copy_id(id_type_t& dst, id_type_t const& src) {
         dst.__id = get_flags(dst.__id) | get_id(src.__id);
     }
@@ -70,7 +75,7 @@ struct id_type_t {
     }
 
     friend std::ostream& operator<<(std::ostream& os, id_type_t const& n) {
-        if (n.__id == NIL)
+        if (is_NIL(n))
             return os << "NIL";
         return os << get_id(n.__id);
     }
@@ -125,6 +130,10 @@ struct storage_type {
     }
 
     NODE& operator[](unsigned id) {
+        return arr[id].node;
+    }
+
+    NODE const& operator[](unsigned id) const {
         return arr[id].node;
     }
 
