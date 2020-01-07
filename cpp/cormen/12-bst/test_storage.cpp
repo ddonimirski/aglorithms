@@ -16,18 +16,18 @@ struct C {
 
 int main() {
 
-    storage_type<C> s;
-    cout << s << endl;
-
-    while (!s.is_empty())
-        s[s.alloc()] = {-10,-20};
-
-
-    cout << s << endl;
-
-    for (int i = 0; i < 20; ++i) {
-        s.free(i);
-    }
-
-    cout << s << endl;
+    storage_type<C, std::array> s;
+//    cout << s << endl;
+//
+//    while (!s.is_empty())
+//        s[s.alloc()] = {-10,-20};
+//
+//
+//    cout << s << endl;
+//
+//    for (int i = 0; i < 20; ++i) {
+//        s.free(i);
+//    }
+//
+//    cout << s << endl;
 }
