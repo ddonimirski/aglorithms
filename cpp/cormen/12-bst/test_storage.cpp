@@ -22,8 +22,8 @@ using array_20 = std::array<T,20>;
 
 int main() {
 
-    storage_type<C, array_20> s;
-    //storage_type<C, std::vector> s;
+    //storage_type<C, array_20> s;
+    storage_type<C, std::vector> s;
     cout << s << endl;
 
     while (!s.is_empty()) {

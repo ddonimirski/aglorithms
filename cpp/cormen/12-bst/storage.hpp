@@ -8,9 +8,18 @@
 #include "id_type.hpp"
 
 //TODO: protect to free the same id few times
+//TODO: add an extension storage during allocation
 
 #define UNION_PORTION
 
+template<class CONT>
+void try_extend_capacity(CONT& cont, size_t count = 20) {
+}
+
+template<class T>
+void try_extend_capacity(std::vector<T>& vec, size_t count = 20) {
+    vec.resize(count);
+}
 
 template<class NODE, template<typename...> class CONT, class ID_TYPE = id_ui0f_type>
 struct storage_type {
@@ -18,8 +27,6 @@ struct storage_type {
     using id_type = ID_TYPE;
 
     static_assert(sizeof(NODE) > sizeof(id_type), " ");
-
-    id_type __free;
 
 #if defined UNION_PORTION
     union portion {
@@ -33,8 +40,11 @@ struct storage_type {
         NODE node;
     };
 #endif
+    using container_type = CONT<portion>;
 
-    CONT<portion> arr;
+    id_type __free;
+
+    container_type arr;
 
 
     //template<>
@@ -45,16 +55,20 @@ struct storage_type {
     //id_type::inner_type size() const {
     //}
 
-    storage_type(): __free{0u} {
-        ///static_assert(N < id_type::NIL, "");
+    storage_type() {
+        //TODO: add check (N < id_type::NIL, "");
+        try_extend_capacity(arr);
+        if (arr.size() < 1) return;
         for (id_type i{0u}; i < arr.size()-1; ++i) {
             arr[i].next = i+1;
         }
+        __free = 0u;
     }
 
     id_type alloc() {
-        if (__free.is_NIL())
+        if (__free.is_NIL()) {
             return id_type{};
+        }
         auto const ret = __free;
         __free = arr[__free].next;
         return ret;
