@@ -31,6 +31,10 @@ int main() {
         s[id] = {-10,-20};
     }
 
+    for (int i = 0; i < s.arr.size(); i++)
+    {
+        cout << s[i] << endl;
+    }
 
     cout << s << endl;
 
