@@ -7,14 +7,15 @@
 #include <type_traits>
 #include "id_type.hpp"
 
-using id_type = id_ui1f_type;
+//TODO: protect to free the same id few times
 
 #define UNION_PORTION
 
 
-
-template<class NODE, template<typename, size_t> class CONT>
+template<class NODE, template<typename...> class CONT, class ID_TYPE = id_ui0f_type>
 struct storage_type {
+
+    using id_type = ID_TYPE;
 
     static_assert(sizeof(NODE) > sizeof(id_type), " ");
 
@@ -33,7 +34,7 @@ struct storage_type {
     };
 #endif
 
-    CONT<portion, 20> arr;
+    CONT<portion> arr;
 
 
     //template<>
@@ -46,41 +47,41 @@ struct storage_type {
 
     storage_type(): __free{0u} {
         ///static_assert(N < id_type::NIL, "");
-        //for (id_type i{0u}; i < arr.size(); ++i) {
-        //    arr[i].next = i+1;
-        //}
+        for (id_type i{0u}; i < arr.size()-1; ++i) {
+            arr[i].next = i+1;
+        }
     }
 
-//    id_type alloc() {
-//        if (__free.is_NIL())
-//            return id_type{};
-//        auto const ret = __free;
-//        __free = arr[__free].next;
-//        return ret;
-//    }
-//
-//    void free(id_type id) {
-//        copy(arr[id].next, __free);
-//        __free = id;
-//    }
-//
-//    bool is_empty() const {
-//        return __free.is_NIL();
-//    }
-//
-//    NODE& operator[](unsigned id) {
-//        return arr[id].node;
-//    }
-//
-//    friend std::ostream& operator<<(std::ostream& os, storage_type const& s) {
-//
-//        os << "free " << s.__free << '\n';
-//
-//        for (id_type i = 0u; i < storage_type::capacity; ++i) {
-//            os << i << ':' << s.arr[i].next << '\n';
-//        }
-//        return os;
-//    }
+    id_type alloc() {
+        if (__free.is_NIL())
+            return id_type{};
+        auto const ret = __free;
+        __free = arr[__free].next;
+        return ret;
+    }
+
+    void free(id_type id) {
+        arr[id].next.copy(__free);
+        __free = id;
+    }
+
+    bool is_empty() const {
+        return __free.is_NIL();
+    }
+
+    NODE& operator[](unsigned id) {
+        return arr[id].node;
+    }
+
+    friend std::ostream& operator<<(std::ostream& os, storage_type const& s) {
+
+        os << "free " << s.__free << '\n';
+
+        for (id_type i = 0u; i < s.arr.size(); ++i) {
+            os << i << ':' << s.arr[i].next << '\n';
+        }
+        return os;
+    }
 };
 
 #endif // STORAGE_HPP
