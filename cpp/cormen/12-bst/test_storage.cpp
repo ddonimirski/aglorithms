@@ -2,6 +2,7 @@
 #include <cassert>
 
 #include <variant>
+#include <list>
 
 using std::cout, std::endl;
 
@@ -14,20 +15,32 @@ struct C {
     }
 };
 
+
+template <class T>
+using array_20 = std::array<T,20>;
+
+
 int main() {
 
-    storage_type<C, std::array> s;
-//    cout << s << endl;
-//
-//    while (!s.is_empty())
-//        s[s.alloc()] = {-10,-20};
-//
-//
-//    cout << s << endl;
-//
-//    for (int i = 0; i < 20; ++i) {
-//        s.free(i);
-//    }
-//
-//    cout << s << endl;
+    //storage_type<C, array_20> s;
+    storage_type<C, std::vector> s;
+    cout << s << endl;
+
+    while (!s.is_empty()) {
+        auto const id = s.alloc();
+        s[id] = {-10,-20};
+    }
+
+    for (int i = 0; i < s.arr.size(); i++)
+    {
+        cout << s[i] << endl;
+    }
+
+    cout << s << endl;
+
+    for (int i = 0; i < 20; ++i) {
+        s.free(i);
+    }
+
+    cout << s << endl;
 }

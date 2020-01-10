@@ -104,9 +104,10 @@ DISABLE_WARNING_POP
 
 template<class T, unsigned FB>
 struct id_type_t: public base_type<T, FB> {
-    //using base_t = base_type<T, FLAGS_BITS>;
-    //using inner_type = typename base_t::inner_type;
+    using base = base_type<T, FB>;
+    using inner_type = typename base::inner_type;
 
+    id_type_t(inner_type id=base::NIL):base{id}{}
 };
 
 
@@ -114,6 +115,8 @@ template<class T>
 struct id_type_t <T, 0>: public base_type<T, 0> {
     using base = base_type<T, 0>;
     using inner_type = typename base::inner_type;
+
+    id_type_t(inner_type id=base::NIL):base{id}{}
 
     void on(inner_type mask = base::FLG) = delete;
     void off(inner_type mask = base::FLG) = delete;
