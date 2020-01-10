@@ -16,51 +16,18 @@ struct C {
 
 int main() {
 
-
-    id_type id;
-
-    assert (is_NIL(id));
-    assert (!is_on(id));
-    on(id);
-    assert (is_NIL(id));
-    assert (is_on(id));
-    off(id);
-    assert (is_NIL(id));
-    assert (!is_on(id));
-    flip(id);
-    assert (is_NIL(id));
-    assert (is_on(id));
-    flip(id);
-    assert (is_NIL(id));
-    assert (!is_on(id));
-
-    id = 1u;
-    assert (id == 1u);
-    assert (!is_on(id));
-    flip(id);
-    assert (id == 1u);
-    assert (is_on(id));
-    id = 2;
-    assert (id == 2u);
-    assert (is_on(id));
-    flip(id);
-    assert (id == 2u);
-    assert (!is_on(id));
-
-    id = id_type::NIL;
-    assert (is_NIL(id));
-    assert (!is_on(id));
-    id = 3;
-    assert (id == 3u);
-    assert (!is_on(id));
-    flip(id);
-    assert (id == 3u);
-    assert (is_on(id));
-
-    id = id_type();
-    assert (is_NIL(id));
-    assert (is_on(id));
-
-    cout << is_on(id) << ' ' << id << endl;
-
+    storage_type<C, std::array> s;
+//    cout << s << endl;
+//
+//    while (!s.is_empty())
+//        s[s.alloc()] = {-10,-20};
+//
+//
+//    cout << s << endl;
+//
+//    for (int i = 0; i < 20; ++i) {
+//        s.free(i);
+//    }
+//
+//    cout << s << endl;
 }
