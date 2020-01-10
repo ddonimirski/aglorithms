@@ -20,11 +20,11 @@ void test_bst() {
 }
 
 void test_red_black_bst() {
-    red_black_bst<int, int, 16> rb;
+    red_black_bst<int, int> rb;
 
-    auto test_free_space = [&rb]() {
-    };
-    test_free_space();
+    //auto test_free_space = [&rb]() {
+    //};
+    //test_free_space();
 
     auto test_add_first_node = [&rb]() {
         rb.add(1, 10);
@@ -47,8 +47,8 @@ void test_red_black_bst() {
     test_add_first_node();
 
     cout << rb << endl;
-    cout << rb.min() << endl;
-    cout << rb.max() << endl;
+    //cout << rb.min() << endl;
+    //cout << rb.max() << endl;
 }
 
 int main() {

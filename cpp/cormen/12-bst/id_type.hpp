@@ -91,6 +91,8 @@ DISABLE_WARNING_POP
     void copy(base_type const& src) { __id = src.__id; }
     void copy_id(base_type const& src) noexcept { __id = get_flags(__id) | get_id(src.__id); }
 
+    void flip_flags() noexcept { __id = (~get_flags(__id)) & get_id(__id); }
+
     friend std::ostream& operator<<(std::ostream& os, base_type const& n) {
 #if defined DEBUG
         os << '(' << mask2lm(n.__id) << ')';
@@ -126,6 +128,7 @@ struct id_type_t <T, 0>: public base_type<T, 0> {
     void copy_flags(id_type_t const& src) = delete;
 
     void copy_id(id_type_t const& src) noexcept { base::copy(src); }
+
 };
 
 

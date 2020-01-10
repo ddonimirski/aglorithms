@@ -28,7 +28,14 @@ int main() {
 
     while (!s.is_empty()) {
         auto const id = s.alloc();
-        s[id] = {-10,-20};
+        if (!id.is_NIL())
+            s[id] = {-10,-20};
+    }
+
+    for (int i = 0; i < 10; i++) {
+        auto const id = s.alloc();
+        if (!id.is_NIL())
+            s[id] = {-20,-20};
     }
 
     for (int i = 0; i < s.arr.size(); i++)

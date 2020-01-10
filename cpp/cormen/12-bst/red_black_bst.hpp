@@ -4,11 +4,14 @@
 #include <numeric>
 #include <iostream>
 #include <cassert>
+#include <vector>
 #include "storage.hpp"
 
 
-template<class V, class K=int, unsigned N=20>
+template<class V, class K=int, int N = 20>
 struct red_black_bst {
+
+    using id_type = id_ui1f_type;
 
     struct node {
         id_type parent;
@@ -24,11 +27,11 @@ struct red_black_bst {
 
         node(node const& n): key{n.key}, val{n.val} {}
 
-        bool is_red() const noexcept { return is_on(parent); }
-        void set_red() noexcept { on(parent); } 
-        void set_black() noexcept { off(parent); } 
-        void flip_color() noexcept { flip(parent); } 
-        void copy_color(node const& n) noexcept { copy_flags(parent, n.parent); }
+        bool is_red() const noexcept { return parent.is_on(); }
+        void set_red() noexcept { parent.on(); } 
+        void set_black() noexcept { parent.off(); } 
+        void flip_color() noexcept { parent.flip_flags(); } 
+        void copy_color(node const& n) noexcept { parent.copy_flags(n.parent); }
 
         friend std::ostream& operator << (std::ostream& os, node const& n) {
             os << '[' << n.is_red() << ':' << n.parent << ' ' << n.left << ',' << n.right << ']' << ' ';
@@ -36,9 +39,11 @@ struct red_black_bst {
         }
     };
 
+    template<class T>
+        using array20 = std::array<T, N>;
 
     id_type root;
-    storage_type<node, N> storage;
+    storage_type<node, array20, id_type> storage;
 
     // TODO: fancy constructors
     //red_black_bst() { }
@@ -57,7 +62,7 @@ struct red_black_bst {
 //    }
 
     bool is_RED(id_type id) {
-        if (is_NIL(id)) return false;
+        if (id.is_NIL()) return false;
         return  storage[id].is_red();
     }
 
@@ -68,7 +73,7 @@ struct red_black_bst {
     }
 
     void add(K const& k, V const& v) {
-        if (is_NIL(root)) {
+        if (root.is_NIL()) {
             auto const id = storage.alloc();
             storage[id] = node{k, v};
             root = id;
@@ -79,7 +84,7 @@ struct red_black_bst {
     }
 
     id_type add(id_type h, K const& k, V const& v) {
-        if (is_NIL(h)) {
+        if (h.is_NIL()) {
             auto const id = storage.alloc();
             storage[id] = node{k, v};
             // new node is always red :p
@@ -136,7 +141,7 @@ struct red_black_bst {
             if (is_RED(storage[h].left)) {
                 h = rotate_left(storage[h].left);
             }
-            if (k == storage[h].key && is_NIL(storage[h].right)) {
+            if (k == storage[h].key && storage[h].rightis_NIL()) {
                 return id_type{};
             }
             if (!is_RED(storage[h].right) && !is_RED(storage[storage[h].right].left)) {
@@ -158,7 +163,7 @@ struct red_black_bst {
 
         auto& head = storage[h];
         auto const x  = head.right;
-        assert(!is_NIL(x));
+        assert(!x.is_NIL());
 
         auto& node = storage[x];
         assert(node.is_red());
@@ -176,7 +181,7 @@ struct red_black_bst {
     id_type rotate_right(id_type h) {
         auto& head = storage[h];
         auto const x  = head.left;
-        assert(!is_NIL(x));
+        assert(!x.is_NIL());
 
         auto& node = storage[x];
         assert(node.is_red());
@@ -192,7 +197,7 @@ struct red_black_bst {
 
     void flip_colors(id_type h) {
         auto& head = storage[h];
-        assert(!is_NIL(head.left) && !is_NIL(head.right));
+        assert(!head.left.is_NIL() && !head.right.is_NIL());
 
         auto& left_node = storage[head.left];
         auto& right_node = storage[head.right];
@@ -254,7 +259,7 @@ struct red_black_bst {
     }
 
     K min() const {
-        if (auto const id = min(root); !is_NIL(id)) {
+        if (auto const id = min(root); !id.is_NIL()) {
             return storage[id].key;
         }
 
@@ -263,13 +268,13 @@ struct red_black_bst {
     }
 
     id_type min(id_type h) const {
-        assert(!is_NIL(h));
-        if (is_NIL(storage[h].left)) return h;
+        assert(!h.is_NIL());
+        if (storage[h].left.is_NIL()) return h;
         return min(storage[h].left);
     }
 
     K max() const {
-        if (auto const id = max(root); !is_NIL(id)) {
+        if (auto const id = max(root); !id.is_NIL()) {
             return storage[id].key;
         }
 
@@ -278,8 +283,8 @@ struct red_black_bst {
     }
 
     id_type max(id_type h) const {
-        assert(!is_NIL(h));
-        if (is_NIL(storage[h].right)) return h;
+        assert(!h.is_NIL());
+        if (storage[h].right.is_NIL()) return h;
         return max(storage[h].right);
     }
 
@@ -287,7 +292,7 @@ struct red_black_bst {
     friend std::ostream& operator << (std::ostream& os, red_black_bst const& bst) {
         os << "red black storage\n";
         os << "root " << bst.root << '\n';
-        for (id_type i = 0; i < N; ++i) {
+        for (id_type i = 0; i < bst.storage.arr.size(); ++i) {
             os << i << ' ' << bst[i] << '\n';
         }
         return os;

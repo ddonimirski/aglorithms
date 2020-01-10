@@ -7,19 +7,13 @@
 #include <type_traits>
 #include "id_type.hpp"
 
+#include <cassert>
+
 //TODO: protect to free the same id few times
 //TODO: add an extension storage during allocation
 
 #define UNION_PORTION
 
-template<class CONT>
-void try_extend_capacity(CONT& cont, size_t count = 20) {
-}
-
-template<class T>
-void try_extend_capacity(std::vector<T>& vec, size_t count = 20) {
-    vec.resize(count);
-}
 
 template<class NODE, template<typename...> class CONT, class ID_TYPE = id_ui0f_type>
 struct storage_type {
@@ -40,10 +34,35 @@ struct storage_type {
         NODE node;
     };
 #endif
+
+
     using container_type = CONT<portion>;
 
-    id_type __free;
+    static void fill_next(container_type& cont, id_type id) {
+        if (cont.size() < 1) return;
+        for (; id < cont.size()-1; ++id) {
+            cont[id].next = id+1;
+        }
+    }
 
+
+    template<class C>
+    static id_type try_extend_capacity(C& cont, size_t count = 20) {
+        // default CONT can not be extended
+        return {};
+    }
+
+
+    template<class T>
+    static id_type try_extend_capacity(std::vector<T>& vec, size_t count = 20) {
+        id_type const id = vec.size();
+        vec.resize(count + id);
+        return id;
+    }
+
+
+
+    id_type __free;
     container_type arr;
 
 
@@ -58,19 +77,20 @@ struct storage_type {
     storage_type() {
         //TODO: add check (N < id_type::NIL, "");
         try_extend_capacity(arr);
-        if (arr.size() < 1) return;
-        for (id_type i{0u}; i < arr.size()-1; ++i) {
-            arr[i].next = i+1;
-        }
+        fill_next(arr, 0u);
         __free = 0u;
     }
 
     id_type alloc() {
         if (__free.is_NIL()) {
-            return id_type{};
+            __free = try_extend_capacity(arr);
+            if (__free.is_NIL()) return {};
+            fill_next(arr, __free);
         }
         auto const ret = __free;
         __free = arr[__free].next;
+
+        assert(!ret.is_NIL());
         return ret;
     }
 
@@ -86,6 +106,11 @@ struct storage_type {
     NODE& operator[](unsigned id) {
         return arr[id].node;
     }
+
+    NODE const& operator[](unsigned id) const {
+        return arr[id].node;
+    }
+
 
     friend std::ostream& operator<<(std::ostream& os, storage_type const& s) {
 
