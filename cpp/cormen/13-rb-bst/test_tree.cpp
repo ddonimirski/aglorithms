@@ -7,31 +7,56 @@ using std::cout, std::endl;
 
 void test_rb_bst() {
 
-    rb_bst<int, int> rb;
+    rb_bst<unsigned, int> rb;
 
     auto test_insert_nodes = [&rb]() {
         rb.insert(5, 60);
-        rb.insert(4, 50);
+        rb.insert(6, 50);
         rb.insert(3, 40);
-        rb.insert(2, 30); // 1
+        rb.insert(4, 30);
         rb.insert(1, 20);
-        rb.insert(0, 10); // 0
-        rb.insert(-1, 70);
-        rb.insert(-2, 80);
-        rb.insert(-3, 90);
-        rb.insert(-4, 90);
-        rb.insert(-5, 90);
-        rb.insert(-6, 90);
-        rb.insert(-7, 90);
-        rb.insert(-9, 90);
-        rb.insert(-8, 90);
-        rb.insert(-10, 90);
-        rb.insert(-12, 90);
-        rb.insert(-11, 90);
+        rb.insert(2, 10);
+
+        //rb.erase(3);
+
+        //rb.insert(1, 60);
+        //rb.insert(2, 50);
+        //rb.insert(3, 40);
+        //rb.insert(4, 30);
+        //rb.insert(5, 20);
+        //rb.insert(6, 10);
+        //rb.insert(7, 70);
+        //rb.insert(8, 80);
+        //rb.insert(9, 90);
+        //rb.insert(10, 90);
+        //rb.insert(11, 90);
+        //rb.insert(12, 90);
+        //rb.insert(13, 90);
+        //rb.insert(14, 90);
+        //rb.insert(15, 90);
+        //rb.insert(16, 90);
+        //rb.insert(17, 90);
+        //rb.insert(18, 90);
+
+        //rb.erase(18);
+        //rb.erase(7);
     };
     test_insert_nodes();
 
     cout << rb << endl;
+
+    {
+        auto [key, value] = rb.min();
+        cout << key << ' ' << value << endl;
+    }
+
+    {
+        auto [key, value] = rb.max();
+        cout << key << ' ' << value << endl;
+    }
+
+    cout << *rb.get_value(1) << endl;
+    cout << rb[1u] << endl;
 }
 
 void test_red_black_bst() {

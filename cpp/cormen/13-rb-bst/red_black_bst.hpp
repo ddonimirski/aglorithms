@@ -260,65 +260,7 @@ struct red_black_bst {
         return h;
     }
 
-/////// ---------------------- insert - cormen -------------
-    void insert(K const& k, V const& v) {
-
-
-        auto  id = storage.alloc();
-        storage[id] = node{k, v};
-
-        id_type y;
-        id_type x = root;
-
-        while (!x.is_NIL()) {
-            y = x;
-            if (k < storage[x].key) {
-                x = storage[x].left;
-            } else {
-                x = storage[x].right;
-            }
-        }
-
-        if (!y.is_NIL()) {
-            (k < storage[y].key ? storage[y].left:storage[y].right) = id;
-            storage[id].parent = y; 
-            storage[id].set_red();
-            id = insert_fix(id, y);
-        }
-
-        set_root(id);
-    }
-
-    auto insert_fix(id_type z, id_type p) {
-        auto r = root;
-        id_type y;
-
-        while (is_RED(p) && !storage[p].parent.is_NIL()) {
-            if (storage[p].parent.left == p) { // parent on left
-                y = storage[p].parent.right;
-                if (is_RED(y)) {
-
-                }
-            }
-            else { // parent on right
-
-            }
-        }
-
-        return r;
-    }
-
-
-
-    void erase(K const& k) {
-    }
-
-    void erase_fix(id_type z) {
-    }
-
-
 //---------------------------------------------------------
-
 
 
     K min() const {

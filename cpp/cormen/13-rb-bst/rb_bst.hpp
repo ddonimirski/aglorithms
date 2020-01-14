@@ -5,6 +5,7 @@
 #include <iostream>
 #include <cassert>
 #include <vector>
+#include <optional>
 #include "storage.hpp"
 
 
@@ -69,12 +70,85 @@ struct rb_bst {
         root = x;
     }
 
+    id_type find_key(K const& k) const noexcept {
+        id_type x = root;
+        while (!x.is_NIL()) {
+            if (k == storage[x].key) break;
+            x = (k < storage[x].key) ? storage[x].left : storage[x].right;
+        }
+        return x;
+    }
+
+    std::optional<V> get_value(K const& k) const {
+        if (auto const id = find_key(k); !id.is_NIL())
+            return storage[id].val;
+        return {};
+    }
+
+    V& operator[] (K const& k) {
+        auto const id = find_key(k);
+        if (id.is_NIL())
+            throw int();
+        return storage[id].val;
+    }
+
+    ///V operator[] (K const& k) const { // consider
+    V const& operator[] (K const& k) const {
+        auto const id = find_key(k);
+        if (id.is_NIL())
+            throw int();
+        return storage[id].val;
+    }
+
+    auto node_min(id_type x) const {
+        if (!x.is_NIL()) {
+            while (!storage[x].left.is_NIL()) {
+                x = storage[x].left;
+            }
+        }
+
+        return x;
+    }
+
+    auto min() const {
+        auto const id = node_min(root);
+        if (id.is_NIL())
+            throw int();
+
+        struct {
+            K key;
+            V value;
+        } const ret = { storage[id].key, storage[id].val };
+
+        return ret;
+    }
+
+    auto node_max(id_type x) const {
+        if (!x.is_NIL()) {
+            while (!storage[x].right.is_NIL()) {
+                x = storage[x].right;
+            }
+        }
+        return x;
+    }
+
+    auto max() const {
+        auto const id = node_max(root);
+        if (id.is_NIL())
+            throw int();
+
+        struct {
+            K key;
+            V value;
+        } const ret = { storage[id].key, storage[id].val };
+
+        return ret;
+    }
+
 
     void insert(K const& k, V const& v) {
         auto  id = storage.alloc();
         storage[id] = node{k, v};
-
-        std::cout << "add " << id << ' ' << storage[id] << '\n';
 
         id_type y;
         id_type x = root;
@@ -149,9 +223,55 @@ struct rb_bst {
 
 
     void erase(K const& k) {
+        auto const z = find_key(k);
+        if (z.is_NIL()) {
+            return; // already 
+        }
+
+        std::cerr << "key (" << k << ") " << z << " is_red " << is_RED(z) << '\n';
+
+        auto y = z;
+        auto y_red = is_RED(y);
+        id_type x;
+
+        if (storage[z].left.is_NIL()) {
+            std::cerr << "left null get right\n";
+            x = storage[z].right;
+            transplant(z, storage[z].right);
+        } else if (storage[z].right.is_NIL()) {
+            std::cerr << "right null get left\n";
+            x = storage[z].left;
+            transplant(z, storage[z].left);
+        } else {
+            y = node_min(storage[z].right);
+            y_red = is_RED(y);
+            std::cerr << "found next " << y <<  ' ' << "red " << y_red << std::endl;
+            x = storage[y].right;
+            std::cerr << "x " << x <<  ' ' << "red " << is_RED(y) << std::endl;
+            if (storage[y].parent == z) {
+                if (!x.is_NIL())
+                    storage[x].parent = y;
+            } else {
+                transplant(y, storage[y].right);
+                storage[y].right = storage[z].right;
+                storage[storage[y].right].parent = y;
+            }
+            transplant(z, y);
+            storage[y].left = storage[z].left;
+            storage[storage[y].left].parent = y;
+            storage[y].copy_color(storage[z]);
+        }
+
+        if (!y_red)
+            erase_fix(x);
+
+        std::cerr << "erased " << z << ' ' << storage[z] << '\n';
+        storage.free(z);
     }
 
+
     void erase_fix(id_type z) {
+        std::cerr << "erase_fix " << z << '\n';
     }
 
     void update_head_parent(node& head, id_type h, id_type c) {
@@ -207,6 +327,7 @@ struct rb_bst {
     }
 
     void transplant(id_type u, id_type v) {
+        std::cerr << "transplant " << u << " " << v << std::endl;
         auto& u_node = storage[u];
         if (u_node.parent.is_NIL()) {
             set_root(v);
@@ -214,44 +335,12 @@ struct rb_bst {
             auto& u_parent = storage[u_node.parent];
             (u == u_parent.left ? u_parent.left : u_parent.right) = v;
         }
-        storage[v].parent = u_node.parent;
+        if (!v.is_NIL())
+            storage[v].parent = u_node.parent;
     }
 
 
 //---------------------------------------------------------
-
-
-
-    K min() const {
-        if (auto const id = min(root); !id.is_NIL()) {
-            return storage[id].key;
-        }
-
-        //TODO: throw
-        return K{};
-    }
-
-    id_type min(id_type h) const {
-        assert(!h.is_NIL());
-        if (storage[h].left.is_NIL()) return h;
-        return min(storage[h].left);
-    }
-
-    K max() const {
-        if (auto const id = max(root); !id.is_NIL()) {
-            return storage[id].key;
-        }
-
-        //TODO: throw
-        return K{};
-    }
-
-    id_type max(id_type h) const {
-        assert(!h.is_NIL());
-        if (storage[h].right.is_NIL()) return h;
-        return max(storage[h].right);
-    }
-
 
     friend std::ostream& operator << (std::ostream& os, rb_bst const& bst) {
         os << "red black storage\n";
