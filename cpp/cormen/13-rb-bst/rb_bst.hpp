@@ -10,10 +10,12 @@
 
 
 /////// ---------------------- insert - cormen -------------
-template<class V, class K=int, int N = 20>
+template<class V, class K=int, template<typename...> class CONT = std::vector>
 struct rb_bst {
 
     using id_type = id_ui1f_type;
+    template<class T>
+    using container_type = CONT<T>;
 
     struct node {
         id_type parent;
@@ -41,11 +43,9 @@ struct rb_bst {
         }
     };
 
-    template<class T>
-        using array20 = std::array<T, N>;
 
     id_type root;
-    storage_type<node, array20, id_type> storage;
+    storage_type<node, container_type, id_type> storage;
 
     // TODO: fancy constructors
     //rb_bst() { }
@@ -58,7 +58,7 @@ struct rb_bst {
         return storage[id];
     }
 
-    bool is_RED(id_type id) {
+    bool is_RED(id_type id) const {
         if (id.is_NIL()) return false;
         return  storage[id].is_red();
     }
@@ -149,6 +149,8 @@ struct rb_bst {
     void insert(K const& k, V const& v) {
         auto  id = storage.alloc();
         storage[id] = node{k, v};
+
+        std::cerr << "insert " << id << ' ' << storage[id] << '\n';
 
         id_type y;
         id_type x = root;
@@ -270,8 +272,45 @@ struct rb_bst {
     }
 
 
-    void erase_fix(id_type z) {
-        std::cerr << "erase_fix " << z << '\n';
+    void erase_fix(id_type x) {
+        std::cerr << "erase_fix " << x << ' ' << is_RED(x) << '\n';
+        if (x.is_NIL())
+            return;
+        
+        while (x != root and !is_RED(x)) {
+            auto& x_node = storage[x];
+            if (storage[x_node.parent].left == x) {
+                auto w = storage[x_node.parent].right;
+                if (is_RED(w)) {
+                    storage[w].set_black();
+                    storage[x_node.parent].set_red();
+                    left_rotate(x_node.parent);
+                    w = storage[x_node.parent].right;
+                }
+                if (!is_RED(storage[w].left) && !is_RED(storage[w].right)) {
+                    storage[w].set_red();
+                    x = x_node.parent;
+                }
+                else {
+                    if (!is_RED(storage[w].right)) {
+                        storage[storage[w].left].set_black();
+                        storage[w].set_red();
+                        right_rotate(w);
+                        w = storage[storage[w].parent].right;
+                    }
+                    storage[w].copy_color(storage[x].parent);
+                    storage[storage[x].parent].set_black();
+                    storage[storage[w].right].set_black();
+                    left_rotate(storage[x].parent);
+                    set_root(x);
+                }
+            }
+            else {
+                //TODO:...
+            }
+        }
+
+        storage[x].set_black();
     }
 
     void update_head_parent(node& head, id_type h, id_type c) {

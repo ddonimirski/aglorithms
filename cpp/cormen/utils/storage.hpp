@@ -35,7 +35,6 @@ struct storage_type {
     };
 #endif
 
-
     using container_type = CONT<portion>;
 
     static void fill_next(container_type& cont, id_type id) {
@@ -80,6 +79,9 @@ struct storage_type {
         fill_next(arr, 0u);
         __free = 0u;
     }
+
+
+    storage_type(CONT<NODE> 
 
     id_type alloc() {
         if (__free.is_NIL()) {
