@@ -1,5 +1,5 @@
-#include <iostream>
 #include <cassert>
+#include <iostream>
 
 using std::cout, std::cerr, std::endl, std::cin;
 
