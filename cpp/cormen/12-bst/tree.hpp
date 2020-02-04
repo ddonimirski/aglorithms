@@ -80,9 +80,10 @@ struct tree_us {
         
         std::cout << "level (" << level << ") ";
         std::cout << storage[id].val << " left ";
-        print(storage[id].left, level + 1);
+        print_bfs(storage[id].left, level + 1);
         std::cout << " right ";
-        print(storage[id].right, level + 1);
+        print_bfs(storage[id].right, level + 1);
+
         std::cout << std::endl;
     }
 
@@ -136,7 +137,7 @@ struct tree_us {
 
         return next;
     }
-
 };
+
 
 #endif
