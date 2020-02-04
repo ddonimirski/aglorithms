@@ -81,7 +81,7 @@ struct storage_type {
     }
 
 
-    storage_type(CONT<NODE> 
+    //storage_type(CONT<NODE> 
 
     id_type alloc() {
         if (__free.is_NIL()) {
