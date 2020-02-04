@@ -83,6 +83,7 @@ struct tree_us {
         print_bfs(storage[id].left, level + 1);
         std::cout << " right ";
         print_bfs(storage[id].right, level + 1);
+
         std::cout << std::endl;
     }
 

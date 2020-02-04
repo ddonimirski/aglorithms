@@ -1,11 +1,12 @@
 #include <iostream>
 #include <cassert>
 #include "tree.hpp"
-#include "red_black_bst.hpp"
+
 
 using std::cout, std::endl;
 
 void test_bst() {
+
     tree_us<int, 16> tt;
     tt.add(8);
     tt.add(4);
@@ -19,10 +20,8 @@ void test_bst() {
     tt.print();
 }
 
-void test_red_black_bst() {
-}
+
 
 int main() {
-
 
 }
