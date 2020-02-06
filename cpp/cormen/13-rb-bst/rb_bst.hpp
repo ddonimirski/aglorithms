@@ -298,6 +298,7 @@ struct rb_bst {
                         right_rotate(w);
                         w = storage[storage[w].parent].right;
                     }
+
                     storage[w].copy_color(storage[storage[x].parent]);
                     storage[storage[x].parent].set_black();
                     storage[storage[w].right].set_black();
