@@ -5,17 +5,6 @@
 #include <string>
 
 
-//template <class CONT>
-//static void pr_contener(CONT&& cont, size_t s, size_t e)
-//{
-//    std::cout << '(' << s << ':' << e <<')' << '[' << ' ';
-//    for (; s <= e; ++s) {
-//        std::cout  << cont[s] << ' ';
-//    }
-//    std::cout << ']' << std::endl;
-//} 
-//
-
 template<class T>
 struct carr
 {
@@ -47,7 +36,7 @@ static void pr_cont(std::ostream& os, CONT&& cont)
 } 
 
 
-template<class T, template<typename> class CONT>
+template<class T, template<typename...> class CONT>
 std::ostream& operator << (std::ostream& os, CONT<T> const& arr)
 {
     pr_cont(os, arr);

@@ -1,0 +1,14 @@
+-g
+-std=c++17
+-stdlib=libc++
+-fno-exceptions
+-lc++abi
+-fno-rtti
+-Wall
+-pedantic
+-Werror
+-fno-omit-frame-pointer
+-I.
+-I..
+-I./utils
+-I../utils

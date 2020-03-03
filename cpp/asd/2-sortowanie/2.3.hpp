@@ -1,9 +1,9 @@
 #if !defined QUICK_SORT_HPP
 #define QUICK_SORT_HPP
 #include <stack>
+#include "pr.hpp"
 
-#include <iostream>
-using std::cerr, std::endl;
+using std::cerr, std::cout, std::endl;
 
 template<class T, template<typename...> class C>
 auto partition(C<T>& arr, size_t b, size_t e) noexcept {
@@ -76,15 +76,15 @@ void quick_sort2(C<T>& arr) {
     struct pp { size_t l, r; };
     std::stack<pp> s;
 
-    auto const n = arr.size();
+    auto const n = arr.size()-1;
 
     if (n > 1) {
         s.push({0, n});
         do {
             auto [l, r] = s.top(); s.pop();
-            while (r - l > 1) { // m == 1
+            while (l < r) { // m == 1
                 auto const j = partition(arr, l, r);
-                if (j >= r) break;
+                if (j == l) break;
                 s.push({j+1, r});
                 r = j-1;
             }
@@ -98,15 +98,15 @@ template<class T, template<typename...> class C>
 void quick_sort3(C<T>& arr) {
 
     std::stack<int> s;
-    auto const n = arr.size();
+    auto const n = arr.size()-1;
 
     if (n > 2) {
         s.push(n);
-        auto r = -1;
+        auto r = -2;
         do {
             auto l = r + 2;
             auto r = s.top(); s.pop();
-            while (r - l > 1) { // m == 1
+            while (l < r) { // m == 0
                 auto const j = partition(arr, l, r);
                 if (j >= r) break;
                 s.push(r);
