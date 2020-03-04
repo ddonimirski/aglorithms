@@ -2,7 +2,6 @@
 #define QUICK_SORT_HPP
 #include <stack>
 #include <string>
-#include <iostream>
 #include "pr.hpp"
 
 using std::string;
@@ -25,10 +24,8 @@ auto partition(C<T>& arr, size_t b, size_t e) noexcept {
             if (r != l) swap(r, l);
             l++;
         }
-        pr("      ",arr,':', l, r, ':', b, e);
     }
     swap(l-1, b);
-    pr("      ",arr, ':', b, e);
     return l-1;
 }
 
@@ -136,7 +133,10 @@ void quick_sort4(C<T>& arr) {
        return i;
     };
 
-    auto flip_sign = [&arr](auto i) noexcept { arr[i] *= -1; };
+    auto flip_sign = [&arr](auto i) noexcept {
+        pr((arr[i] < 0? "unmark": "mark"), i, arr[i]);
+        arr[i] *= -1;
+    };
 
     if (n > 2) {
         auto r = -2; // l will be set to 0 at first time
@@ -146,14 +146,13 @@ void quick_sort4(C<T>& arr) {
             auto const l = r + 2;
             r = r_id(l);
             flip_sign(r); // unmark
-            while (r - l > 0) { // m == 1
+            while (r - l > 1) { // m == 1
                 auto const j = partition(arr, l, r);
                 flip_sign(r);
-                pr(arr, l, j, r);
                 r = j - 1;
             }
             // insertion_sort for r - l < m
-        } while(r < n - 2);
+        } while(r + 2 <= n);
     }
 }
 
