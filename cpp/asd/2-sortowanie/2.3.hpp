@@ -1,12 +1,16 @@
 #if !defined QUICK_SORT_HPP
 #define QUICK_SORT_HPP
 #include <stack>
+#include <string>
+#include <iostream>
 #include "pr.hpp"
 
-using std::cerr, std::cout, std::endl;
+using std::string;
+using print::pr;
 
 template<class T, template<typename...> class C>
 auto partition(C<T>& arr, size_t b, size_t e) noexcept {
+
     auto swap = [&arr](auto i , auto j) noexcept {
         auto const t = std::move(arr[i]);
         arr[i] = std::move(arr[j]);
@@ -21,8 +25,10 @@ auto partition(C<T>& arr, size_t b, size_t e) noexcept {
             if (r != l) swap(r, l);
             l++;
         }
+        pr("      ",arr,':', l, r, ':', b, e);
     }
     swap(l-1, b);
+    pr("      ",arr, ':', b, e);
     return l-1;
 }
 
@@ -84,7 +90,8 @@ void quick_sort2(C<T>& arr) {
             auto [l, r] = s.top(); s.pop();
             while (l < r) { // m == 1
                 auto const j = partition(arr, l, r);
-                if (j == l) break;
+//                if (j == l) break;
+                if (r == 1) break;
                 s.push({j+1, r});
                 r = j-1;
             }
@@ -102,11 +109,11 @@ void quick_sort3(C<T>& arr) {
 
     if (n > 2) {
         s.push(n);
-        auto r = -2;
+        auto r = -2; // l will be set to 0 at first time
         do {
-            auto l = r + 2;
-            auto r = s.top(); s.pop();
-            while (l < r) { // m == 0
+            auto const l = r + 2;
+            r = s.top(); s.pop();
+            while (r - l > 0) { // m == 0
                 auto const j = partition(arr, l, r);
                 if (j >= r) break;
                 s.push(r);
@@ -116,5 +123,39 @@ void quick_sort3(C<T>& arr) {
         } while(s.size() != 0);
     }
 }
+
+
+// assumpsion T must be signed and values greater then 0
+template<class T, template<typename...> class C>
+void quick_sort4(C<T>& arr) {
+
+    auto const n = arr.size()-1;
+    auto r_id = [&arr, n](auto l) noexcept {
+       auto i = l; 
+       while(i < n && arr[i] > 0) ++i;
+       return i;
+    };
+
+    auto flip_sign = [&arr](auto i) noexcept { arr[i] *= -1; };
+
+    if (n > 2) {
+        auto r = -2; // l will be set to 0 at first time
+        flip_sign(n); // to find the end
+
+        do {
+            auto const l = r + 2;
+            r = r_id(l);
+            flip_sign(r); // unmark
+            while (r - l > 0) { // m == 1
+                auto const j = partition(arr, l, r);
+                flip_sign(r);
+                pr(arr, l, j, r);
+                r = j - 1;
+            }
+            // insertion_sort for r - l < m
+        } while(r < n - 2);
+    }
+}
+
 
 #endif //QUICK_SORT_HPP
