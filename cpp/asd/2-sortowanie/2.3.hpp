@@ -133,10 +133,7 @@ void quick_sort4(C<T>& arr) {
        return i;
     };
 
-    auto flip_sign = [&arr](auto i) noexcept {
-        pr((arr[i] < 0? "unmark": "mark"), i, arr[i]);
-        arr[i] *= -1;
-    };
+    auto flip_sign = [&arr](auto i) noexcept { arr[i] *= -1; };
 
     if (n > 2) {
         auto r = -2; // l will be set to 0 at first time
@@ -146,12 +143,13 @@ void quick_sort4(C<T>& arr) {
             auto const l = r + 2;
             r = r_id(l);
             flip_sign(r); // unmark
-            while (r - l > 1) { // m == 1
+            while (r - l > 0) { // m == 0
                 auto const j = partition(arr, l, r);
+                if (j == r) break;
                 flip_sign(r);
                 r = j - 1;
             }
-            // insertion_sort for r - l < m
+            // insertion_sort for r - l <= m
         } while(r + 2 <= n);
     }
 }

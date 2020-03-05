@@ -21,10 +21,9 @@ int main() {
 
         //pr(arr);
     }
-    pr("-----\n");
     { /// only int greater then 0 :P but not unsigned int :P
-        vector arr = {7,3,4,6,1,5,2,10,9,8};
-        //vector arr = {5,6,7,8,2,4,3};
+        //vector arr = {7,3,4,6,1,5,2,10,9,8};
+        vector arr = {5,6,7,8,8,2,4,3};
         pr(arr);
         quick_sort4(arr);
         pr(arr);
