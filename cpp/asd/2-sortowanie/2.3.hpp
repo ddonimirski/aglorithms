@@ -1,11 +1,6 @@
 #if !defined QUICK_SORT_HPP
 #define QUICK_SORT_HPP
 #include <stack>
-#include <string>
-#include "pr.hpp"
-
-using std::string;
-using print::pr;
 
 template<class T, template<typename...> class C>
 auto partition(C<T>& arr, size_t b, size_t e) noexcept {
@@ -29,7 +24,6 @@ auto partition(C<T>& arr, size_t b, size_t e) noexcept {
     return l-1;
 }
 
-static int a = 0;
 
 template<class T, template<typename...> class C>
 void quick_sort_impl_rec(C<T>& arr, size_t b, size_t e) {
@@ -37,6 +31,7 @@ void quick_sort_impl_rec(C<T>& arr, size_t b, size_t e) {
     if (b < p) quick_sort_impl_rec(arr, b, p-1);
     if (p < e) quick_sort_impl_rec(arr, p+1, e);
 }
+
 
 template<class T, template<typename...> class C>
 void quick_sort(C<T>& arr) {
@@ -85,10 +80,9 @@ void quick_sort2(C<T>& arr) {
         s.push({0, n});
         do {
             auto [l, r] = s.top(); s.pop();
-            while (l < r) { // m == 1
+            while (l < r) { // r - l > m -- m == 0
                 auto const j = partition(arr, l, r);
-//                if (j == l) break;
-                if (r == 1) break;
+                if (j <= 0) break;
                 s.push({j+1, r});
                 r = j-1;
             }
@@ -110,9 +104,9 @@ void quick_sort3(C<T>& arr) {
         do {
             auto const l = r + 2;
             r = s.top(); s.pop();
-            while (r - l > 0) { // m == 0
+            while (l < r) { // r - l > m -- m == 0
                 auto const j = partition(arr, l, r);
-                if (j >= r) break;
+                if (j <= 0) break;
                 s.push(r);
                 r = j - 1;
             }
@@ -143,7 +137,7 @@ void quick_sort4(C<T>& arr) {
             auto const l = r + 2;
             r = r_id(l);
             flip_sign(r); // unmark
-            while (r - l > 0) { // m == 0
+            while (l < r) { // r - l > m -- m == 0
                 auto const j = partition(arr, l, r);
                 if (j == r) break;
                 flip_sign(r);
