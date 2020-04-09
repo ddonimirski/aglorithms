@@ -4,18 +4,7 @@
 #include <array>
 #include <string>
 
-
-//template <class CONT>
-//static void pr_contener(CONT&& cont, size_t s, size_t e)
-//{
-//    std::cout << '(' << s << ':' << e <<')' << '[' << ' ';
-//    for (; s <= e; ++s) {
-//        std::cout  << cont[s] << ' ';
-//    }
-//    std::cout << ']' << std::endl;
-//} 
-//
-
+namespace print {
 template<class T>
 struct carr
 {
@@ -47,34 +36,34 @@ static void pr_cont(std::ostream& os, CONT&& cont)
 } 
 
 
-template<class T, template<typename> class CONT>
-std::ostream& operator << (std::ostream& os, CONT<T> const& arr)
-{
-    pr_cont(os, arr);
-    return os; 
-}
+template<class T, template<typename...> class CONT>
+    std::ostream& operator << (std::ostream& os, CONT<T> const& arr)
+    {
+        pr_cont(os, arr);
+        return os; 
+    }
 
 template<class T, int N, template<typename, int> class CONT>
-std::ostream& operator << (std::ostream& os, CONT<T, N> const& arr)
-{
-    pr_cont(os, arr);
-    return os; 
-}
+    std::ostream& operator << (std::ostream& os, CONT<T, N> const& arr)
+    {
+        pr_cont(os, arr);
+        return os; 
+    }
 
 template<class T, int N>
-std::ostream& operator << (std::ostream& os, std::array<T, N> const& arr)
-{
-    pr_cont(os, arr);
-    return os; 
-}
+    std::ostream& operator << (std::ostream& os, std::array<T, N> const& arr)
+    {
+        pr_cont(os, arr);
+        return os; 
+    }
 
 
 template<class T, int N>
-std::ostream& operator << (std::ostream& os, T const(&arr)[N])
-{
-    pr_cont(os, arr);
-    return os; 
-}
+    std::ostream& operator << (std::ostream& os, T const(&arr)[N])
+    {
+        pr_cont(os, arr);
+        return os; 
+    }
 
 
 template<class T>
@@ -122,5 +111,6 @@ static void log(T... args)
 #define log(...)
 #endif
 
+}
 
 #endif //PR_HPP
