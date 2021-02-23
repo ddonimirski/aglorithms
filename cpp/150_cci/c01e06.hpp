@@ -1,11 +1,10 @@
-#include <iostream>
-#include <vector>
-#include <cassert>
+#if !defined AL_150_CCI_C01_E06
+#define AL_150_CCI_C01_E06
 
-#include "matrix.hpp"
+#include <utils/matrix.hpp>
 
-using std::cout, std::cerr , std::endl;
-using std::cin;
+namespace a150_cci::c01::e06
+{
 
 //     i,j    <-     j, n-1-i
 //      ^             |
@@ -13,7 +12,7 @@ using std::cin;
 // n-1-j, i   -> n-1-i, n-1-j
 //
 template<class T>
-void rotate_right(matrix<T>& m) {
+void rotate_right(utils::matrix<T>& m) {
 
     auto N = m.__col_size;
     for (int layer = 0; layer < N/2; ++layer) {
@@ -32,7 +31,7 @@ void rotate_right(matrix<T>& m) {
 }
 
 template<class T>
-void rotate_left(matrix<T>& m) {
+void rotate_left(utils::matrix<T>& m) {
 
     auto const N = m.__col_size;
     for (auto j = 0; j < N/2; ++j) {
@@ -49,25 +48,7 @@ void rotate_left(matrix<T>& m) {
     }
 
 }
+} //  namespace a150_cci::c01::e06
 
-int main() {
+#endif // AL_150_CCI_C01_E06
 
-    unsigned N;
-    cin  >> N;
-
-    matrix<uint32_t> mm(N, N);
-
-    for (int i = 0, c = 1; i < N; ++i)
-        for (int j = 0; j < N; ++j)
-            mm[i][j] = c++;
-
-    cout << mm << endl;
-
-    rotate_right(mm);
-
-    cout << mm << endl;
-
-    rotate_left(mm);
-
-    cout << mm << endl;
-}

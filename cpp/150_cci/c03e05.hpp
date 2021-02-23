@@ -1,10 +1,11 @@
+#if !defined AP_150_CCI_C03_E05
+#define AP_150_CCI_C03_E05
+
 #include <iostream>
-#include <cassert>
 #include <vector>
 
-using std::cout, std::cerr , std::endl;
-using std::cin;
-using std::vector;
+namespace a150_cci::c03::e05
+{
 
 template<class T>
 struct stack {
@@ -73,6 +74,10 @@ struct queue {
     }
 };
 
+} // namespace a150_cci::c03::e05
+
+#if 0
+
 int main() {
 
     queue<int> q;
@@ -101,3 +106,6 @@ int main() {
     while(q.size())
         cout << q.remove() << endl;
 }
+#endif
+
+#endif // AP_150_CCI_C03_E05

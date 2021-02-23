@@ -1,9 +1,12 @@
-#if !defined MATRIX_HPP
-#define MATRIX_HPP
+#if !defined UTILS_MATRIX_HPP
+#define UTILS_MATRIX_HPP
 
 #if !defined NO_STREAM
 #include <iostream>
 #endif
+
+namespace utils
+{
 
 template<class T>
 struct matrix {
@@ -39,4 +42,6 @@ struct matrix {
 #endif 
 };
 
-#endif // MATRIX_HPP
+} // namespace utils
+
+#endif // UTILS_MATRIX_HPP

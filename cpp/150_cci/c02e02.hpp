@@ -1,12 +1,10 @@
+#if !defined AP_150_CCI_C02_E02
+#define AP_150_CCI_C02_E02
+
 #include <iostream>
-#include <cassert>
-#include <vector>
 
-
-using std::cout, std::cerr , std::endl;
-using std::cin;
-using std::vector;
-
+namespace a150_cci::c02::e02
+{
 
 struct node_list {
     int data;
@@ -17,10 +15,10 @@ struct node_list {
 void pr(node_list* head) {
 
     while(head) {
-        cout << head->data << ' ';
+        std::cout << head->data << ' ';
         head = head->next;
     }
-    cout << '\n';
+    std::cout << '\n';
 }
 
 int remove_nth (node_list* head, int n) {
@@ -129,37 +127,8 @@ node_list* last_n(node_list* head, int n) {
     return p1;
 }
 
+} // namespace a150_cci::c02::e02
 
-int main() {
 
-    int N, n;
-    cin >> n;
-    cin >> N;
 
-    if (n > N) { cerr << ":)" << endl; return 0; }
-
-    node_list* head = nullptr;
-    node_list* tail = nullptr;
-
-    while (N--) {
-        int val;
-        cin >> val;
-        auto* v = new node_list(val);
-
-        if (head == nullptr) {
-            head = tail = v;
-        }
-        else {
-            tail->next = v;
-            tail = tail->next;
-        }
-    }
-
-    pr(head);
-    //?? remove_nth(head, n);
-    //head = remove_nth_norec (head, n);
-    //
-    pr(last_n(head, n));
-
-    pr(head);
-}
+#endif // AP_150_CCI_C02_E02

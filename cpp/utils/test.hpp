@@ -9,7 +9,6 @@ bool is_sorted(CONT const& cont)
     {
         if (!CMP::compare(cont[i-1], cont[i]))
         {
-            pr(cont, ":", cont[i-1], "!<", cont[i],"id1:", i-1, "id2:", i);
             return false;
         }
     }
@@ -24,7 +23,6 @@ bool is_sorted(T (&cont)[N])
     {
         if (!CMP::compare(cont[i-1], cont[i]))
         {
-            pr(cont, ":", cont[i-1], "!<", cont[i],"id1:", i-1, "id2:", i);
             return false;
         }
     }
@@ -41,7 +39,6 @@ bool is_sorted(CONT const& cont, size_t s, size_t e)
     {
         if (!CMP::compare(cont[i-1], cont[i]))
         {
-            pr(s,e,cont, ":", cont[i-1], "!<", cont[i],"id1:", i-1, "id2:", i);
             return false;
         }
     }

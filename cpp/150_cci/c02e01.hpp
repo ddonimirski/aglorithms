@@ -1,12 +1,12 @@
+#if !defined AP_150_CCI_C02_E01
+#define  AP_150_CCI_C02_E01
+
 #include <iostream>
-#include <cassert>
 #include <vector>
 
 
-using std::cout, std::cerr , std::endl;
-using std::cin;
-using std::vector;
-
+namespace a150_cci::c02::e01
+{
 
 struct node_list {
     int data;
@@ -16,10 +16,11 @@ struct node_list {
 
 constexpr int MAX_RANGE = 50;
 
-//std::vector<node_list> mem(100);
 
 node_list* remove_duplicates(node_list* head) {
-    vector<int> count(MAX_RANGE); // if range is large should be hashtable
+
+    std::vector<int> count(MAX_RANGE); // if range is large should be hashtable
+
     if (head == nullptr) {
         return head;
     }
@@ -86,10 +87,10 @@ node_list* remove_duplicates_noaddstorage(node_list* head) {
 void pr(node_list* head) {
 
     while(head) {
-        cout << head->data << ' ';
+        std::cout << head->data << ' ';
         head = head->next;
     }
-    cout << '\n';
+    std::cout << '\n';
 }
 
 
@@ -101,32 +102,7 @@ void del_list(node_list* head) {
     }
 }
 
-int main() {
-
-    int N;
-    cin >> N;
-
-    node_list* head = nullptr;
-    node_list* tail = nullptr;
-
-    while (N--) {
-        int val;
-        cin >> val;
-        auto* v = new node_list(val);
-
-        if (head == nullptr) {
-            head = tail = v;
-        }
-        else {
-            tail->next = v;
-            tail = tail->next;
-        }
-    }
-
-    pr(head);
-    //if (auto* del = remove_duplicates(head)) del_list(del);
-    if (auto* del = remove_duplicates_noaddstorage(head)) del_list(del);
-    pr(head);
+} // namespace a150_cci::c02::e01
 
 
-}
+#endif // AP_150_CCI_C02_E01

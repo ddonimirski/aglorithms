@@ -1,11 +1,10 @@
-#include <iostream>
-#include <cassert>
+#if !defined AP_150_CCI_C03_E02
+#define AP_150_CCI_C03_E02
+
 #include <vector>
 
-using std::cout, std::cerr , std::endl;
-using std::cin;
-using std::vector;
-
+namespace a150_cci::c03::e02
+{
 
 template<class T>
 struct stack_with_min {
@@ -67,34 +66,7 @@ struct stack_with_min {
     }
 };
 
-int main() {
+} // namespace a150_cci::c03::e02
 
-    stack_with_min<int> sm;
 
-    sm.push(1);
-    sm.push(2);
-    sm.push(1);
-    sm.push(0);
-    sm.push(0);
-    sm.push(0);
-    sm.push(-1);
-    sm.push(3);
-
-    cerr << sm.top() << endl;
-    cerr << sm.min() << endl;
-
-    sm.pop();
-    cerr << sm.top() << endl;
-    cerr << sm.min() << endl;
-
-    sm.pop();
-    cerr << sm.top() << endl;
-    cerr << sm.min() << endl;
-
-    sm.pop();
-    sm.pop();
-    sm.pop();
-    sm.pop();
-    cerr << sm.top() << endl;
-    cerr << sm.min() << endl;
-}
+#endif // AP_150_CCI_C03_E02

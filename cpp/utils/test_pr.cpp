@@ -5,9 +5,11 @@
 #include <vector>
 #include <list>
 #include <string>
+#include "gtest/gtest.h"
 
 using std::cout;
 
+#if 0
 int main()
 {
     //std::array arr = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
@@ -26,3 +28,9 @@ int main()
     pr(sep{'\n'}, "c array", carr(c_arr), /*"std::array", arr,*/ "std::vector", vec, "std::list", ll);
 
 }
+#endif
+
+TEST(pr, test) {
+}
+
+

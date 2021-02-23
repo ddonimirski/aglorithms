@@ -1,11 +1,9 @@
 #include "bucket.hpp"
 #include <iostream>
 #include <cassert>
+#include "gtest/gtest.h"
 
-using std::cout, std::endl;
-
-
-int main() {
+TEST(bucket, creation) {
 
     bucket<int> bb;
 
@@ -16,10 +14,7 @@ int main() {
     bb.insert(5);
     bb.insert(6);
 
-    cout << bb << endl;
-
     bb.erase(0);
     bb.erase(0);
     
-    cout << bb << endl;
 }

@@ -5,6 +5,7 @@
 #include <string>
 
 namespace print {
+
 template<class T>
 struct carr
 {
@@ -37,7 +38,7 @@ static void pr_cont(std::ostream& os, CONT&& cont)
 
 
 template<class T, template<typename...> class CONT>
-    std::ostream& operator << (std::ostream& os, CONT<T> const& arr)
+    std::ostream& operator << (std::ostream& os, CONT<T>&& arr)
     {
         pr_cont(os, arr);
         return os; 
@@ -91,7 +92,15 @@ struct to_str
 template<class ...T>
 static void pr(T ...args)
 {
+    using namespace print;
     ((std::cout << args << ' '), ...) << std::endl;
+}
+
+template<class ...T>
+static void pr(std::ostream& os, T ...args)
+{
+    using namespace print;
+    ((os << args << ' '), ...) << std::endl;
 }
 
 
@@ -100,6 +109,13 @@ static void pr(sep<S>&& sep, T ...args)
 {
     ((std::cout << args << sep), ...) << std::endl;
 }
+
+template<class S, class ...T>
+static void pr(std::ostream& os, sep<S>&& sep, T ...args)
+{
+    ((os << args << sep), ...) << std::endl;
+}
+
 
 #if defined LOG
 template<class ...T>

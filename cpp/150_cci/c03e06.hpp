@@ -1,17 +1,16 @@
+#if !defined AP_150_CCI_C03_E06
+#define AP_150_CCI_C03_E06
+
 #include <iostream>
-#include <cassert>
 #include <vector>
 
-using std::cout, std::cerr , std::endl;
-using std::cin;
-using std::vector;
 
 template<class T>
-struct stack {
+struct ddstack {
     std::vector<T> storage;
     int curr_top = -1;
 
-    //stack():storage(capacity) {}
+    //ddstack():storage(capacity) {}
 
     T const& top() const {
         if (curr_top == -1) throw int(-1);
@@ -42,7 +41,7 @@ struct stack {
     }
 
 
-    friend std::ostream& operator << (std::ostream& os, stack const& s) {
+    friend std::ostream& operator << (std::ostream& os, ddstack const& s) {
         os << "curr_top: " << s.curr_top << '\n';
         for (size_t i = 0; i < 10; ++i) os << s.storage[i] << ' ';
         return os << '\n';
@@ -52,8 +51,8 @@ struct stack {
 
 
 template<class T>
-auto sort(stack<T>& s) {
-    stack<T> r;
+auto sort(ddstack<T>& s) {
+    ddstack<T> r;
 
     while (!s.is_empty()) {
         auto const t = s.pop();
@@ -67,9 +66,10 @@ auto sort(stack<T>& s) {
     return r;
 }
 
+#if 0
 int main() {
 
-    stack<int> s;
+    ddstack<int> s;
 
     // int n;
     // cin >> n;
@@ -92,3 +92,6 @@ int main() {
 
     return 0;
 }
+#endif
+
+#endif // AP_150_CCI_C03_E06

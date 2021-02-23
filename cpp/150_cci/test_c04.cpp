@@ -1,43 +1,12 @@
-#include <iostream>
-#include <cassert>
-#include <vector>
+#include "c04e07.hpp"
 
-using std::cout, std::cerr , std::endl;
-using std::cin;
-using std::vector;
+#include "gtest/gtest.h"
 
-//BST
+#include <utils/pr.hpp>
 
-template<class T>
-struct node  {
-    node* left = nullptr;
-    node* right = nullptr;
-    T value;
-};
-
-using node_type = node<int>;
-
-bool match_tree(node_type const* t1, node_type const* t2) {
-    if (t1 == nullptr && t2 == nullptr) return true;
-    if (t1 == nullptr || t2 == nullptr) return false;
-
-    cerr << t1->value << ' ' << t2->value << endl;
-    if (t1->value != t2->value) { cerr << "mt <> \n"; return false; }
-    return match_tree(t1->left, t2->left) && match_tree(t1->right, t2->right);
-}
-
-bool sub_tree(node_type const* t1, node_type const* t2) {
-    //if (t1 == nullptr) return false; // t2 was checked before :P
-    if (t1 == nullptr && t2 == nullptr) { cerr << "st nn \n"; return true; }
-    if (t1 == nullptr || t2 == nullptr)  { cerr << "st n|n \n"; return false; }
-    if (t1->value == t2->value) return match_tree(t1, t2);
-    return sub_tree(t1->left, t2) || sub_tree(t1->right, t2);
-}
-
-bool contains_tree(node_type const* t1, node_type const* t2) {
-    if (t2 == nullptr) return true;
-    return sub_tree(t1, t2);
-}
+TEST(c03e07, test)
+{
+#if 0
 
 node_type st[50];
 node_type st2[50];
@@ -98,4 +67,6 @@ int main() {
     s.value = 5;
 
     cout << "nono1: " <<  contains_tree(st, &s) << endl;
+}
+#endif
 }

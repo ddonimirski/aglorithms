@@ -1,9 +1,11 @@
+#if !defined AP_150_CCI_C02_E03
+#define AP_150_CCI_C02_E03
+
 #include <iostream>
-#include <cassert>
 
-using std::cout, std::cerr , std::endl;
-using std::cin;
 
+namespace a150_cci::c02::c03
+{
 
 struct node_list {
     int data;
@@ -15,10 +17,10 @@ struct node_list {
 void pr(node_list* head) {
 
     while(head) {
-        cout << head->data << ' ';
+        std::cout << head->data << ' ';
         head = head->next;
     }
-    cout << '\n';
+    std::cout << '\n';
 }
 
 
@@ -36,7 +38,9 @@ bool delete_node(node_list* node) {
     return true;
 }
 
+} // namespace a150_cci::c02::c03
 
+#if 0
 int main() {
 
     int N, n;
@@ -73,3 +77,6 @@ int main() {
 
     pr(head);
 }
+#endif
+
+#endif // AP_150_CCI_C02_E03
