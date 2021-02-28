@@ -1,10 +1,8 @@
-#include <iostream>
-#include <vector>
-#include <cassert>
+#if !defined DP_CH01_E12
+#define DP_CH01_E12
 
-using std::cout, std::cerr, std::endl;
-using std::vector;
-
+namespace dp::ch01::e12
+{
 // bubble_sort
 //
 //
@@ -39,28 +37,9 @@ void bubble_sort_rec(C<T>& c, size_t n) {
 
 template<class T, template<typename...> class C>
 void bubble_sort_rec(C<T>& c) {
-    bubble_sort_rec(c, c.size()-1);
+    bubble_sort_rec(c, c.size());
 }
 
-template<class C>
-void pr(C const& c) {
-    for (auto v: c) {
-        cout << v << ' ';
-    }
-    cout << '\n';
-}
+} // namespace dp::c01::e12
 
-
-int main() {
-
-    vector v = { 5, 1, 6, 7, 8, 2, 3, 0, 4};
-
-    pr(v);
-    bubble_sort(v);
-    pr(v);
-
-    v = { 5, 1, 6, 7, 8, 2, 3, 0, 4};
-    pr(v);
-    bubble_sort_rec(v);
-    pr(v);
-}
+#endif // DP_CH01_E12

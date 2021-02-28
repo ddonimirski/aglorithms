@@ -1,9 +1,15 @@
+#if !defined CI6th_CH08_E01
+#define CI6th_CH08_E01
+
+#if defined PRINT_MEM
 #include <iostream>
+#endif
+
 #include <vector>
 #include <cassert>
 
-using std::cout, std::cerr , std::endl;
-using std::vector;
+namespace ci6th::ch08::e01
+{
 
 using value_type = unsigned;
 
@@ -25,7 +31,7 @@ value_type triple_step_rec(value_type steps) {
 }
 
 // run time O(n), space O(n)
-value_type triple_step_rec(value_type steps, vector<value_type>& mem) {
+value_type triple_step_rec(value_type steps, std::vector<value_type>& mem) {
     if (steps < 0) return 0;
     if (steps == 0) return 1;
 
@@ -42,7 +48,6 @@ value_type triple_step_rec(value_type steps, vector<value_type>& mem) {
             mem.push_back(sum);
         else {
             assert(false);
-            //mem[steps] = sum;
         }
     }
 #if defined PRINT_MEM
@@ -58,7 +63,7 @@ value_type triple_step_rec(value_type steps, vector<value_type>& mem) {
 // run time O(n), space O(n)
 value_type triple_step_int(value_type steps) {
     if (steps == 0) return 0;
-    vector<value_type> mem(steps);
+    std::vector<value_type> mem(steps);
     mem[0] = 1;
     mem[1] = 2;
     mem[2] = 4;
@@ -87,34 +92,6 @@ value_type triple_step_int2(value_type steps) {
     return mem[(steps-1)%3];
 }
 
-template<class T>
-void pr(vector<T> const& c) {
-    for (auto v: c)
-        cout << v << ' ';
-    cout << '\n';
-}
+} // namespace ci6th::ch08::e01
 
-
-value_type triple_step(value_type steps) {
-
-    vector<value_type> mem = {0, 1};
-
-    auto const sum = triple_step_rec(steps, mem);
-    assert(sum == triple_step_int(steps));
-    assert(sum == triple_step_int2(steps));
-    return sum;
-}
-
-
-int main() {
-
-    cout << triple_step(2) << endl;
-    cout << triple_step(3) << endl;
-    cout << triple_step(4) << endl;
-    cout << triple_step(5) << endl;
-    cout << triple_step(6) << endl;
-    cout << triple_step(7) << endl;
-    cout << triple_step(8) << endl;
-    cout << triple_step(9) << endl;
-    cout << triple_step(10) << endl;
-}
+#endif // CI6th_CH08_E01

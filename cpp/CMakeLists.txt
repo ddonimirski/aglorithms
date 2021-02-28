@@ -1,6 +1,8 @@
 # minimum cmake version
 cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 
+set(CMAKE_CXX_COMPILER clang++)
+
 # project name and language
 project(algorithms LANGUAGES CXX)
 
@@ -97,5 +99,7 @@ if(ENABLE_UNIT_TESTS)
     #dir to tests
     add_subdirectory(utils)
     add_subdirectory(150_cci)
+    add_subdirectory(crack_interview_6th)
+    add_subdirectory(dp)
 
 endif()

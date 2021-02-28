@@ -119,12 +119,12 @@ static void pr(std::ostream& os, sep<S>&& sep, T ...args)
 
 #if defined LOG
 template<class ...T>
-static void log(T... args)
+static void dlog(T... args)
 {
     pr("log", args...);
 }
 #else
-#define log(...)
+#define dlog(...)
 #endif
 
 }
