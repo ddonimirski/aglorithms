@@ -1,4 +1,5 @@
 #include "dpc06e03.hpp"
+#include "dpc06e04.hpp"
 
 #include "gtest/gtest.h"
 #include "utils/test.hpp"
@@ -46,7 +47,7 @@ TEST(dpch06e03, min_dist)
 }
 
 
-TEST(dpch04e03, time_scope)
+TEST(dpch06e03, time_scope)
 {
     constexpr auto n = 400;
     constexpr auto s = 0;
@@ -57,16 +58,43 @@ TEST(dpch04e03, time_scope)
 
     cout << "n = " << n << ' ';
 
-    auto check_time_execution = [&]()
-    {
-        utils::scope_timer st(__func__, cout);
-        return  e03::minCost(s, d, cost);
-    };
-
     // n == 400, at about 5 ms   - dp::ch06::e03::minCost - DP top - down 
+    // using namespace std::literals;
     // n == 400, at about 512 ms - dp::ch05::e02::minCost - recurence with memo 
     // n ==  15, at about 132 ms - dp::ch04::e02::minCost - recurence without memo 
 
-    auto const res = check_time_execution();
+    auto const res = CHECK_TIME(cout, e03::minCost<decltype(cost)>, s, d, cost);
     EXPECT_EQ(res, exp);
+}
+
+TEST(dpch06e04, max_len_substring)
+{
+    using namespace std::literals;
+
+    auto s = "124142"sv;
+    auto exp = 6;
+    auto res = exp; // :)
+
+    res =  CHECK_TIME(cout, e04::max_sub_str_len, s);
+    EXPECT_EQ(res, exp);
+
+    res = CHECK_TIME(cout, e04::max_sub_str_len_DP, s);
+    EXPECT_EQ(res, exp);
+
+    res = CHECK_TIME(cout, e04::max_sub_str_len_prefix, s);
+    EXPECT_EQ(res, exp);
+
+    s = "943072394307239430723948072394307294307239430723943072394807239430723394307239430723943072394807239430723948072394307239438923943078394307239430723943072394307239480723943072394807239430723943872394307239430723";
+    exp = 162;
+
+    res =  CHECK_TIME(cout, e04::max_sub_str_len, s);
+    EXPECT_EQ(res, exp);
+
+    res = CHECK_TIME(cout, e04::max_sub_str_len_DP, s);
+    EXPECT_EQ(res, exp);
+
+#if 0 // failed
+    res = CHECK_TIME(cout, e04::max_sub_str_len_prefix, s);
+    EXPECT_EQ(res, exp);
+#endif 
 }

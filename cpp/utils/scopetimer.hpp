@@ -32,6 +32,15 @@ namespace utils
             clock_type::time_point start_{};
             std::ostream& os_;
     };
+
+    template<class FUN, class ...Args>
+    static inline auto check_time(std::ostream&os, std::string_view name, FUN fun, Args... args)
+    {
+        scope_timer st(name, os);
+        return fun(args...);
+    }
+
+#define CHECK_TIME(os, fun, ...) utils::check_time(os, #fun, fun, __VA_ARGS__)
 }
 
 #endif // SCOPE_TIMER_HPP

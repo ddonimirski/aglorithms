@@ -101,5 +101,6 @@ if(ENABLE_UNIT_TESTS)
     add_subdirectory(150_cci)
     add_subdirectory(crack_interview_6th)
     add_subdirectory(dp)
+    add_subdirectory(interview)
 
 endif()

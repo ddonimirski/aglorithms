@@ -1,9 +1,10 @@
 #if !defined UTILS_MATRIX_HPP
 #define UTILS_MATRIX_HPP
 
-#if !defined NO_STREAM
+//#if !defined NO_STREAM
 #include <iostream>
-#endif
+//#endif
+//
 
 namespace utils
 {
@@ -27,6 +28,16 @@ struct matrix {
             auto* beg = __storage;
             auto* const end = beg + __row_size * __col_size;
             while (beg != end) *beg++ = value;
+        }
+
+        std::cout << "matrix " << r  << ' ' << c << '\n';
+        for (int r = 0; r < __row_size; ++r)
+        {
+            for (int c = 0; c < __col_size; ++c)
+            {
+                std::cout << get_row(r)[c] << ' ';
+            }
+            std::cout << '\n';
         }
     }
 

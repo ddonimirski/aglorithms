@@ -1,20 +1,21 @@
+#if !defined DP_CH06_04
+#define DP_CH06_04
+
 #include <iostream>
+
+#include <string_view>
 #include <vector>
-#include <cassert>
-#include <algorithm>
-#include <limits>
-#include <string>
 
-#include "matrix.hpp"
+#include "utils/matrix.hpp"
 
-using std::cout, std::cerr, std::endl;
-using std::vector;
-using std::string;
+namespace dp::ch06::e04
+{
 
 // sum halfs of substrings are equal
 
-int max_sub_str_len(string const& str) {
-
+int max_sub_str_len(std::string_view str)
+{
+    // Time O(n^3) Space O(1)
     auto n = str.size();
     auto max_len = 0u;
 
@@ -38,10 +39,12 @@ int max_sub_str_len(string const& str) {
     return max_len;
 }
 
-int max_sub_str_len_DP(string const& str) {
-    
+// code .06.05
+int max_sub_str_len_DP(std::string_view str)
+{
+    // Time O(n^2) Space O(n^2)
     auto const n = str.size();
-    matrix<unsigned> sum(n, n);
+    utils::matrix<unsigned> sum(n);
     auto max_len = 0u;
 
     for (auto i = 0u; i < n ; ++i) {
@@ -64,16 +67,31 @@ int max_sub_str_len_DP(string const& str) {
     return max_len;
 }
 
+// additional solution
+int max_sub_str_len_prefix(std::string_view str)
+{
+    // Time O(n^2) Space O(n)
+    auto const n = str.size();
+    std::vector<unsigned> sums(str.size()+1, 0);
+    auto max_len = 0u;
 
-int main() {
+    for (auto i = 0u; i < n; ++i)
+    {
+        for (auto j = i + 1u; j < n; j += 2)
+        {
+            auto len = j - i + 1;
+            if (max_len >= len) continue;
+            auto const half = len/2;
+            auto const lsum = sums[i+half] - sums[i];
+            auto const rsum = sums[i+len] - sums[i+half];
 
-    string s = "124142";
+            if (lsum == rsum) max_len = len;
+        }
+    }
 
-    cout << max_sub_str_len(s) << endl;
-    cout << max_sub_str_len_DP(s) << endl;
-
-    s = "9430723";
-     cout << max_sub_str_len(s) << endl;
-     cout << max_sub_str_len_DP(s) << endl;
+    return max_len;
 }
 
+} // namespace dp::ch06::e04
+
+#endif // DP_CH06_04

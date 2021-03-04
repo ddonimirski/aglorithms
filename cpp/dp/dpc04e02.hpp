@@ -4,13 +4,14 @@
 // recurrence computation with no memoization
 
 #include <limits>
+#include <functional>
 
 #include "utils/pr.hpp"
 
 namespace dp::ch04::e02
 {
     template<class FUN>
-    auto minCost(int s, int d , FUN cost) -> long long
+    auto minCost(int s, int d, FUN cost) -> long long
     {
         auto min_cost = cost(s, d);
 
