@@ -31,6 +31,10 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY
 option(ENABLE_UNIT_TESTS "Enable unit tests" ON)
 message(STATUS "Enable testing: ${ENABLE_UNIT_TESTS}")
 
+# add valgrind
+find_program(MEMORYCHECK_COMMAND NAMES valgrind)
+set(MEMORYCHECK_COMMAND_OPTIONS "--trace-children=yes --leak-check=full")
+
 
 macro(add_test_exec _name)
 
