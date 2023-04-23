@@ -4,10 +4,12 @@ use heap::{Data, Heap, Node, Priority};
 mod heap_tests {
 
     use super::*;
-    type Item = i32;
 
     #[test]
     fn is_empty() {
+
+        type Item = i32;
+
         let heap = Heap::<Item>::new();
         assert!(heap.is_empty());
 
@@ -23,6 +25,8 @@ mod heap_tests {
 
     #[test]
     fn peek() {
+        type Item = i32;
+
         let mut heap = Heap::<Item>::new();
 
         const VALUE_4: Item = 4;
@@ -48,6 +52,8 @@ mod heap_tests {
 
     #[test]
     fn top() {
+        type Item = i32;
+
         let mut heap = Heap::<Item>::new();
 
         const VALUE_4: Item = 4;
@@ -88,6 +94,7 @@ mod heap_tests {
 
     #[test]
     fn heapify() {
+
         type Item = i32;
         const D: heap::Index = 2;
 
@@ -155,85 +162,170 @@ mod heap_tests {
 
     #[test]
     fn from() {
-        type Item = i32;
 
         {
-            const D: heap::Index = 2;
+            type Item = i32;
 
-            let data: Data<Item> = vec![
-                Node {
-                    value: 1,
-                    priority: 1,
-                },
-                Node {
-                    value: 2,
-                    priority: 2,
-                },
-                Node {
-                    value: 3,
-                    priority: 3,
-                },
-                Node {
-                    value: 4,
-                    priority: 4,
-                },
-                Node {
-                    value: 5,
-                    priority: 5,
-                },
-                Node {
-                    value: 6,
-                    priority: 0,
-                },
-            ];
+            {
+                const D: heap::Index = 2;
 
-            let mut heap = Heap::<Item, D>::new().from(data);
+                let data: Data<Item> = vec![
+                    Node {
+                        value: 1,
+                        priority: 1,
+                    },
+                    Node {
+                        value: 2,
+                        priority: 2,
+                    },
+                    Node {
+                        value: 3,
+                        priority: 3,
+                    },
+                    Node {
+                        value: 4,
+                        priority: 4,
+                    },
+                    Node {
+                        value: 5,
+                        priority: 5,
+                    },
+                    Node {
+                        value: 6,
+                        priority: 0,
+                    },
+                    ];
 
-            assert_eq!(heap.top(), 6);
-            assert_eq!(heap.top(), 1);
-            assert_eq!(heap.top(), 2);
-            assert_eq!(heap.top(), 3);
-            assert_eq!(heap.top(), 4);
-            assert_eq!(heap.top(), 5);
-        }
+                let mut heap = Heap::<Item, D>::new().from(data);
+
+                assert_eq!(heap.top(), 6);
+                assert_eq!(heap.top(), 1);
+                assert_eq!(heap.top(), 2);
+                assert_eq!(heap.top(), 3);
+                assert_eq!(heap.top(), 4);
+                assert_eq!(heap.top(), 5);
+            }
+            {
+                const D: heap::Index = 3;
+
+                let data: Data<Item> = vec![
+                    Node {
+                        value: 1,
+                        priority: 1,
+                    },
+                    Node {
+                        value: 2,
+                        priority: 2,
+                    },
+                    Node {
+                        value: 3,
+                        priority: 3,
+                    },
+                    Node {
+                        value: 4,
+                        priority: 4,
+                    },
+                    Node {
+                        value: 5,
+                        priority: 5,
+                    },
+                    Node {
+                        value: 6,
+                        priority: 0,
+                    },
+                    ];
+
+                let mut heap = Heap::<Item, D>::new().from(data);
+
+                assert_eq!(heap.top(), 6);
+                assert_eq!(heap.top(), 1);
+                assert_eq!(heap.top(), 2);
+                assert_eq!(heap.top(), 3);
+                assert_eq!(heap.top(), 4);
+                assert_eq!(heap.top(), 5);
+            }
+        } // type Item = i32
         {
-            const D: heap::Index = 3;
+            type Item = String;
 
-            let data: Data<Item> = vec![
-                Node {
-                    value: 1,
-                    priority: 1,
-                },
-                Node {
-                    value: 2,
-                    priority: 2,
-                },
-                Node {
-                    value: 3,
-                    priority: 3,
-                },
-                Node {
-                    value: 4,
-                    priority: 4,
-                },
-                Node {
-                    value: 5,
-                    priority: 5,
-                },
-                Node {
-                    value: 6,
-                    priority: 0,
-                },
-            ];
+            {
+                const D: heap::Index = 2;
 
-            let mut heap = Heap::<Item, D>::new().from(data);
+                let data: Data<Item> = vec![
+                    Node {
+                        value: String::from("1"),
+                        priority: 1,
+                    },
+                    Node {
+                        value: String::from("2"),
+                        priority: 2,
+                    },
+                    Node {
+                        value: String::from("3"),
+                        priority: 3,
+                    },
+                    Node {
+                        value: String::from("4"),
+                        priority: 4,
+                    },
+                    Node {
+                        value: String::from("5"),
+                        priority: 5,
+                    },
+                    Node {
+                        value: String::from("6"),
+                        priority: 0,
+                    },
+                    ];
 
-            assert_eq!(heap.top(), 6);
-            assert_eq!(heap.top(), 1);
-            assert_eq!(heap.top(), 2);
-            assert_eq!(heap.top(), 3);
-            assert_eq!(heap.top(), 4);
-            assert_eq!(heap.top(), 5);
+                let mut heap = Heap::<Item, D>::new().from(data);
+
+                assert_eq!(heap.top(), "6".to_string());
+                assert_eq!(heap.top(), "1".to_string());
+                assert_eq!(heap.top(), "2".to_string());
+                assert_eq!(heap.top(), "3".to_string());
+                assert_eq!(heap.top(), "4".to_string());
+                assert_eq!(heap.top(), "5".to_string());
+            }
+            {
+                const D: heap::Index = 3;
+
+                let data: Data<Item> = vec![
+                    Node {
+                        value: String::from("1"),
+                        priority: 1,
+                    },
+                    Node {
+                        value: String::from("2"),
+                        priority: 2,
+                    },
+                    Node {
+                        value: String::from("3"),
+                        priority: 3,
+                    },
+                    Node {
+                        value: String::from("4"),
+                        priority: 4,
+                    },
+                    Node {
+                        value: String::from("5"),
+                        priority: 5,
+                    },
+                    Node {
+                        value: String::from("6"),
+                        priority: 0,
+                    },
+                    ];
+
+                let mut heap = Heap::<Item, D>::new().from(data);
+
+                assert_eq!(heap.top(), "6".to_string());
+                assert_eq!(heap.top(), "1".to_string());
+                assert_eq!(heap.top(), "2".to_string());
+                assert_eq!(heap.top(), "3".to_string());
+                assert_eq!(heap.top(), "4".to_string());
+                assert_eq!(heap.top(), "5".to_string());
+            }
         }
     }
 }

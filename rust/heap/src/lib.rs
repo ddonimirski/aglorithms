@@ -23,8 +23,6 @@ where
     }
 }
 
-impl<T> Copy for Node<T> where T: Copy {}
-
 #[derive(Debug)]
 pub struct Heap<T, const D: Index = 2> {
     data: Data<T>,
@@ -32,7 +30,7 @@ pub struct Heap<T, const D: Index = 2> {
 
 impl<T, const D: Index> Heap<T, D>
 where
-    T: Copy + Clone + PartialEq + std::fmt::Debug,
+    T: Clone + PartialEq + std::fmt::Debug,
 {
     /// create new heap
     pub fn new() -> Self {
@@ -105,7 +103,7 @@ where
             0 => return, // panic!?
             1 => self.data.clear(),
             _ => {
-                if let Some(index) = self.find(value) {
+                if let Some(index) = self.find(&value) {
                     self.data.swap_remove(index);
                     push_down::<T, D>(&mut self.data, index);
                 }
@@ -114,7 +112,7 @@ where
     }
 
     pub fn update(&mut self, value: T, priority: Priority) {
-        if let Some(index) = self.find(value) {
+        if let Some(index) = self.find(&value) {
             let old_priority = self.data[index].priority;
             self.data[index].priority = priority;
 
@@ -126,8 +124,8 @@ where
         }
     }
 
-    fn find(&self, value: T) -> Option<Index> {
-        self.data.iter().position(|&node| node.value == value)
+    fn find(&self, value: &T) -> Option<Index> {
+        self.data.iter().position(|node| node.value == *value)
     }
 } // Heap
 
@@ -147,9 +145,9 @@ fn first_child_index<const D: Index>(index: Index) -> Index {
 
 fn bubble_up_index<T, const D: Index>(data: &mut [Node<T>], index: Index)
 where
-    T: Copy + Clone + std::fmt::Debug,
+    T: Clone + std::fmt::Debug,
 {
-    // assert!(max index?);
+    assert!(data.len() > index);
 
     let current_item = data[index].clone();
     let mut index = index;
@@ -159,7 +157,7 @@ where
     while index > 0 {
         let parent_id = parent_index::<D>(index);
         if cmp(data[parent_id].priority, current_item.priority) {
-            data[index] = data[parent_id].clone(); // TODO ? copy
+            data[index] = data[parent_id].clone();
             index = parent_id;
         } else {
             break;
@@ -171,7 +169,7 @@ where
 
 fn bubble_up<T, const D: Index>(data: &mut [Node<T>])
 where
-    T: Copy + Clone + std::fmt::Debug,
+    T: Clone + std::fmt::Debug,
 {
     bubble_up_index::<T, D>(data, data.len() - 1);
 }
@@ -181,17 +179,19 @@ fn highest_priority_child<T, const D: Index>(
     index: Index,
 ) -> Option<(Index, Node<T>)>
 where
-    T: Copy + Clone + std::fmt::Debug,
+    T: Clone + std::fmt::Debug,
 {
     use std::cmp::min;
     let mut child_id = first_child_index::<D>(index);
+
+    let cmp = |a, b| a > b; // TODO: pass as param
 
     if child_id < data.len() {
         let child_index_max = min(child_id + D, data.len());
         let mut child_prio = data[child_id].priority;
 
         for id in child_id + 1..child_index_max {
-            if data[id].priority < child_prio {
+            if !cmp(data[id].priority, child_prio) {
                 child_id = id;
                 child_prio = data[id].priority;
             }
@@ -205,13 +205,15 @@ where
 
 fn push_down<T, const D: Index>(data: &mut [Node<T>], index: Index)
 where
-    T: Copy + Clone + std::fmt::Debug,
+    T: Clone + std::fmt::Debug,
 {
     let mut index = index;
-    let current_item = data[index];
+    let current_item = data[index].clone();
+
+    let cmp = |a, b| a > b; // TODO pass a param
 
     while let Some((child_id, child_item)) = highest_priority_child::<T, D>(data, index) {
-        if current_item.priority > child_item.priority {
+        if cmp(current_item.priority, child_item.priority) {
             data[index] = child_item;
             index = child_id;
         } else {
@@ -224,7 +226,7 @@ where
 
 pub fn heapify<T, const D: Index>(data: &mut [Node<T>])
 where
-    T: Copy + Clone + std::fmt::Debug,
+    T: Clone + std::fmt::Debug,
 {
     for i in (0..data.len() / D + 1).rev() {
         push_down::<T, D>(data, i);
@@ -401,7 +403,7 @@ mod prv_test {
             assert_eq!(data[i].priority, expected[i].priority);
         }
 
-        // TODO add D3 ...
+        // TODO add D3, Item = String  ...
     }
 
     #[test]
@@ -467,46 +469,91 @@ mod prv_test {
     fn push_down() {
         use super::*;
 
-        type Item = i32;
-        const D: Index = 2;
+        {
+            type Item = i32;
+            const D: Index = 2;
 
-        let mut data: Data<Item> = vec![
-            Node {
-                value: 6,
-                priority: 0,
-            },
-            Node {
-                value: 2,
-                priority: 2,
-            },
-            Node {
-                value: 1,
-                priority: 1,
-            },
-            Node {
-                value: 4,
-                priority: 4,
-            },
-            Node {
-                value: 5,
-                priority: 5,
-            },
-            Node {
-                value: 3,
-                priority: 3,
-            },
-        ];
+            let mut data: Data<Item> = vec![
+                Node {
+                    value: 6,
+                    priority: 0,
+                },
+                Node {
+                    value: 2,
+                    priority: 2,
+                },
+                Node {
+                    value: 1,
+                    priority: 1,
+                },
+                Node {
+                    value: 4,
+                    priority: 4,
+                },
+                Node {
+                    value: 5,
+                    priority: 5,
+                },
+                Node {
+                    value: 3,
+                    priority: 3,
+                },
+            ];
 
-        push_down::<Item, D>(&mut data, 0);
+            push_down::<Item, D>(&mut data, 0);
 
-        assert_eq!(data[0].value, 6);
-        assert_eq!(data[0].priority, 0);
+            assert_eq!(data[0].value, 6);
+            assert_eq!(data[0].priority, 0);
 
-        data.swap_remove(0);
+            data.swap_remove(0);
 
-        push_down::<Item, D>(&mut data, 0);
+            push_down::<Item, D>(&mut data, 0);
 
-        assert_eq!(data[0].value, 1);
-        assert_eq!(data[0].priority, 1);
+            assert_eq!(data[0].value, 1);
+            assert_eq!(data[0].priority, 1);
+        }
+        {
+            type Item = String;
+            const D: Index = 2;
+
+            let mut data: Data<Item> = vec![
+                Node {
+                    value: String::from("6"),
+                    priority: 0,
+                },
+                Node {
+                    value: String::from("2"),
+                    priority: 2,
+                },
+                Node {
+                    value: String::from("1"),
+                    priority: 1,
+                },
+                Node {
+                    value: String::from("4"),
+                    priority: 4,
+                },
+                Node {
+                    value: String::from("5"),
+                    priority: 5,
+                },
+                Node {
+                    value: String::from("3"),
+                    priority: 3,
+                },
+            ];
+
+            push_down::<Item, D>(&mut data, 0);
+
+            assert_eq!(data[0].value, String::from("6"));
+            assert_eq!(data[0].priority, 0);
+
+            data.swap_remove(0);
+
+            push_down::<Item, D>(&mut data, 0);
+
+            assert_eq!(data[0].value, String::from("1"));
+            assert_eq!(data[0].priority, 1);
+        }
     }
 }
