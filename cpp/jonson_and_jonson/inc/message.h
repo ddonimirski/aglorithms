@@ -3,21 +3,22 @@
 
 #include <string>
 #include <address.h>
-#include <format>
+#include <optional>
+#include <ostream>
 
 namespace jj
 {
+    struct Message final
+    {
+        Address address_;
+        std::optional<Address> from_ = {};
+        std::string body_;
+    };
 
-struct Message
-{
-    Address address_;
-    std::string body_;
 
-    friend inline auto to_str(Message const& msg) -> std::string {
-        return std::format("address: {}, body: {}", to_str(msg), msg.body_);
-    }
-};
+    [[nodiscard]] auto to_str(Message const& msg) -> std::string;
 
+    auto operator << (std::ostream& os, Message const& msg) -> std::ostream&;
 
 } // namespace jj
 

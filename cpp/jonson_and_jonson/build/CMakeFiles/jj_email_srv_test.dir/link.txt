@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/jj_email_srv_test.dir/tests/account_test.cpp.o CMakeFiles/jj_email_srv_test.dir/tests/address_test.cpp.o CMakeFiles/jj_email_srv_test.dir/tests/message_test.cpp.o -o jj_email_srv_test  -lgtest_main -lgtest -lpthread libjj_email_srv.a 

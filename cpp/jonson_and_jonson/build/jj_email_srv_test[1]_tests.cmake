@@ -1,0 +1,5 @@
+add_test( test_Address.to_str /home/dd/aglorithms/cpp/jonson_and_jonson/build/jj_email_srv_test [==[--gtest_filter=test_Address.to_str]==] --gtest_also_run_disabled_tests)
+set_tests_properties( test_Address.to_str PROPERTIES WORKING_DIRECTORY /home/dd/aglorithms/cpp/jonson_and_jonson/build SKIP_REGULAR_EXPRESSION [==[\[  SKIPPED \]]==])
+add_test( test_Message.to_str /home/dd/aglorithms/cpp/jonson_and_jonson/build/jj_email_srv_test [==[--gtest_filter=test_Message.to_str]==] --gtest_also_run_disabled_tests)
+set_tests_properties( test_Message.to_str PROPERTIES WORKING_DIRECTORY /home/dd/aglorithms/cpp/jonson_and_jonson/build SKIP_REGULAR_EXPRESSION [==[\[  SKIPPED \]]==])
+set( jj_email_srv_test_TESTS test_Address.to_str test_Message.to_str)

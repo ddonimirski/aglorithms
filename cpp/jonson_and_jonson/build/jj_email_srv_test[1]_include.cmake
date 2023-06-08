@@ -1,0 +1,5 @@
+if(EXISTS "/home/dd/aglorithms/cpp/jonson_and_jonson/build/jj_email_srv_test[1]_tests.cmake")
+  include("/home/dd/aglorithms/cpp/jonson_and_jonson/build/jj_email_srv_test[1]_tests.cmake")
+else()
+  add_test(jj_email_srv_test_NOT_BUILT jj_email_srv_test_NOT_BUILT)
+endif()

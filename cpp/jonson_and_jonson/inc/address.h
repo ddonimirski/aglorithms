@@ -3,29 +3,20 @@
 
 #include <string>
 #include <stdexcept>
+#include <ostream>
 
 namespace jj {
 
-class Address {
+    [[nodiscard]] auto checked(std::string const& address) -> std::string;
 
-    std::string address_;
+    [[nodiscard]] auto is_correct(std::string const& address) noexcept -> bool;
 
-    static inline auto is_correct(std::string const& address) noexcept -> bool {
-        return true;
-    }
+    class Address {
 
-    static inline auto checked(std::string && address) -> std::string {
-
-        if (!is_correct(address)) {
-            // add address;
-            throw std::runtime_error("wrong address");
-        }
-
-        return address;
-    }
+        std::string address_;
 
 
-    public:
+        public:
 
         Address(std::string && address): address_{checked(std::move(address))} {}
         Address(std::string const& address): Address(std::string{address}) {}
@@ -37,14 +28,20 @@ class Address {
         Address& operator = (Address &&) = default;
         ~Address() = default;
 
-        auto operator == (Address const& a) const -> bool {
-            return address_ == a.address_;
+        friend inline auto operator == (Address const& a1, Address const& a2) -> bool {
+            return a1.address_ == a2.address_;
         }
 
         friend inline auto to_str(Address const& addr) -> std::string {
             return addr.address_;
         }
-};
+
+        // TODO: remove if supprot format
+        friend inline auto operator << (std::ostream& os, Address const& addr) -> std::ostream& {
+            return os << to_str(addr);
+        }
+
+    };
 
 } // namespace jj
 
