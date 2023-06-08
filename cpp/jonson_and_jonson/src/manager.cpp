@@ -8,84 +8,85 @@
 #include <sec_email.h>
 #include <log.h>
 
+#include <iostream>
+
 
 namespace jj {
 
-    struct Item {
-        std::shared_ptr<Account> account_;
-        std::thread thread_;
-        std::shared_ptr<Queue<Message>> queue_ = {};
-    };
+    void Manager::create_account(AccountConf&& conf) {
 
-
-    namespace {
-
-        struct Manager final {
-
-            std::unordered_map<Address, Item> map_ = {};
-
-            std::vector<std::string> patterns_ = {};
-            std::set<Address> blocked_ = {};
-
-            Manager() {
-             create_account(AccountConf{ .address_ = sec::address() });
-            }
-        };
-
-        // NOLINTBEGIN
-        Manager manager_{ };
-        // NOLINTEND
-
-    }
-
-    void create_account(AccountConf&& conf) {
-
-         auto& map = manager_.map_;
-         auto address = conf.address_;
+         auto const address = conf.address_;
  
-         if (map.find(address) == map.end())
+         if (map_.find(address) == map_.end())
          {
              LOG_DBG("create account for ", address);
+
+             auto new_queue = std::make_shared<Queue<QueueItem>>();
+             conf.queue_ = new_queue;
+
+             if (!conf.sender_) {
+                 conf.sender_ = [this](Message&& msg) {
+                     send_to(std::move(msg));
+                 };
+             }
+
              auto new_account = Account::create(std::move(conf));
-             auto new_queue = std::make_shared<Queue<Message>>();
-             map.emplace(
+
+             auto thread_runner = [account = new_account]() {
+                    LOG_DBG("start runner ", account->conf_.address_);
+                    while(true) {
+                        account->receive_item_from_queue();
+                    }
+                    LOG_DBG("end runner ", account->conf_.address_);
+             };
+
+             map_.emplace(
                      address,
                      Item {
-                     .account_ =  new_account,
-                     .thread_ = std::thread([new_account, new_queue]() {
-                                while(true) {
-                                    auto msg = new_queue->pop();
-                                    LOG_DBG("thread pop ", msg);
-                                    new_account->receive(std::move(msg));
-                                }
-                             }),
-                     .queue_ = new_queue
-                });
+                        .account_ = new_account,
+                        .thread_ = std::thread(thread_runner)
+                    });
 
-             map.at(address).thread_.detach();
+             map_.at(address).thread_.detach(); // TODO consider join and the Manager destruction ?
          }
     }
 
-    void notify_pattern(std::string const& pattern) {
-        // TODO implement
-        (void)pattern;
+    // function add pattern to all actors
+    void Manager::notify_pattern(std::string const& pattern) {
+        for (auto & [address, item]: map_) {
+            if (address == sec::address()) {
+                continue;
+            }
+            item.account_->push_to_queue(Pattern{.pattern_ = pattern});
+        }
     }
 
-    void send_to(Message&& msg) {
-
-        auto& map = manager_.map_;
-
-        if (auto item = map.find(msg.address_); item != map.end()) {
-            LOG_DBG("push ", msg);
-            item->second.queue_->push(std::move(msg));
-            return;
+    void Manager::notify_blocked(std::string const& pattern) {
+        for (auto & [address, item]: map_) {
+            if (address == sec::address()) {
+                continue;
+            }
+            item.account_->push_to_queue(Blocked{.address_ = Address(pattern)});
         }
+    }
 
-        LOG_DBG("address ", msg.address_, " doesn't exist");
+    void Manager::send_to(Message&& msg) {
 
-        create_account(AccountConf{ .address_ = msg.address_, .send_ = send_to });
+        auto const address = msg.address_;
 
-        map.at(msg.address_).queue_->push(std::move(msg));
+        if (auto item = map_.find(address); item != map_.end()) {
+            LOG_DBG("push ", msg);
+            item->second.account_->push_to_queue(std::move(msg));
+        }
+        else {
+            LOG_DBG("account with address ", msg.address_, " doesn't exist");
+
+            auto sender = [this](Message&& msg) { send_to(std::move(msg)); };
+
+            create_account(AccountConf{ .address_ = address, .sender_ = sender});
+
+            map_.at(address).account_->push_to_queue(std::move(msg));
+        }
     }
 }
 

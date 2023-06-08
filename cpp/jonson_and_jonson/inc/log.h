@@ -22,9 +22,8 @@ auto log_msg(
     };
 
 }
-// TODO  pritty funtion name name/ short file path
+
 #define LOG_BASE(level, ...) ::jj::log::Logger::write_to_log(jj::log::LogMsg{ .level_ = level, .file_ = __FILE__, .func_ = (char const*)__PRETTY_FUNCTION__, .line_ = __LINE__, .msg_ = jj::to_str(__VA_ARGS__)});
-// #define LOG_BASE(level, ...) ::jj::log::Logger::write_to_log(log_msg(level, __FILE__,__PRETTY_FUNCTION__,__LINE__, __VA_ARGS__));
 #define LOG_DBG(...) LOG_BASE(jj::log::LogLevel::DBG, __VA_ARGS__);
 #define LOG_MSG(...) LOG_BASE(jj::log::LogLevel::MSG, __VA_ARGS__);
 #define LOG_WAR(...) LOG_BASE(jj::log::LogLevel::WAR, __VA_ARGS__);

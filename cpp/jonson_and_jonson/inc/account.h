@@ -14,6 +14,8 @@ namespace jj {
 
     class Account final : public std::enable_shared_from_this<Account>  {
 
+        friend class Manager;
+
         AccountConf conf_;
         std::unordered_set<Address> address_book_;
         aho_corasick::trie trie_patterns_;
@@ -35,6 +37,11 @@ namespace jj {
         auto is_spam(Message const& msg) -> bool;
 
         void add_spam(std::string const& pattern);
+
+        // accessors for Manager
+        void receive_item_from_queue();
+
+        void push_to_queue(QueueItem&& item) { conf_.queue_->push(std::move(item)); }
 
         public:
 

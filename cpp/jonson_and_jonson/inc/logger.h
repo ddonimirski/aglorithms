@@ -6,10 +6,8 @@
 
 namespace jj::log {
 
-
-    class Logger
+    struct Logger
     {
-        public:
         static auto level() -> LogLevel;
         static auto filename() -> std::string const&;
 
@@ -17,9 +15,6 @@ namespace jj::log {
         static void filename(std::string const& filename);
         static void write_to_log(LogMsg && msg);
 
-#if defined TEST_ACCESSORS
-        // TODO
-#endif
     };
 
 } // namespace jj::log

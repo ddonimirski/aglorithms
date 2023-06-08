@@ -28,6 +28,12 @@ namespace jj {
         return cypher;
     }
 
+    // type decuction for variants (!won't work)
+    template<class ...Ts>
+    struct overloaded: Ts... { using Ts::operator()...; };
+
+    template<class ...Ts>
+    overloaded(Ts ...) -> overloaded<Ts...>;
 
 } // namespace jj
 

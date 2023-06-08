@@ -2,6 +2,8 @@
 #include <log_msg.h>
 #include <iostream>
 #include <mutex>
+#include <fstream>
+#include <sstream>
 
 
 #ifndef LOG_LEVEL
@@ -53,11 +55,16 @@ namespace jj::log {
 
             std::lock_guard<std::mutex> lock(log_mtx_);
 
-            to_log_line(std::cerr, msg);
-            std::cerr << std::endl;
+            std::stringstream ss;
 
-            // TODO add file
+            to_log_line(ss, msg);
             (void)std::move(msg);
+
+            std::cerr << ss.str() << std::endl;
+
+            static std::ofstream log_file(DEFAULT_LOG_FILENAME);
+
+            log_file << ss.str() << std::endl;
         }
     }
 }  // namespace jj::log

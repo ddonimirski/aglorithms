@@ -1,6 +1,0 @@
-/home/dd/aglorithms/cpp/jonson_and_jonson/build/CMakeFiles/rebuild_cache.dir
-/home/dd/aglorithms/cpp/jonson_and_jonson/build/CMakeFiles/edit_cache.dir
-/home/dd/aglorithms/cpp/jonson_and_jonson/build/CMakeFiles/jj_email_srv.dir
-/home/dd/aglorithms/cpp/jonson_and_jonson/build/CMakeFiles/jj_email_srv_example.dir
-/home/dd/aglorithms/cpp/jonson_and_jonson/build/CMakeFiles/jj_email_srv_test.dir
-/home/dd/aglorithms/cpp/jonson_and_jonson/build/CMakeFiles/test.dir

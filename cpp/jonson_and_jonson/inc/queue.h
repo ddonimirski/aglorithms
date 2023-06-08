@@ -12,7 +12,7 @@
 
 namespace jj {
 
-#ifdef MUTEX_QUEUE
+#ifdef ATOMIC_SYNC
 
     template<class MSG>
     class Queue
@@ -24,7 +24,6 @@ namespace jj {
 
         void push(MSG && msg) {
 
-            LOG_DBG(msg);
             while (lock_.test_and_set(std::memory_order_acquire)) ;
 
             queue_.push(std::move(msg));
@@ -38,8 +37,6 @@ namespace jj {
 
             auto msg = queue_.front();
             queue_.pop();
-
-            LOG_DBG("poped ", msg);
 
             lock_.clear(std::memory_order_release);
 
@@ -61,8 +58,6 @@ namespace jj {
 
         void push(MSG&& msg) {
 
-            LOG_DBG(msg);
-
             std::lock_guard<std::mutex> lock(mutex_);
 
             queue_.push(std::move(msg));
@@ -71,14 +66,11 @@ namespace jj {
 
         auto pop() -> MSG {
 
-            LOG_DBG("pop message");
             std::unique_lock<std::mutex> lock(mutex_);
             cond_.wait(lock, [this] { return !queue_.empty(); });
 
             auto msg = queue_.front();
             queue_.pop();
-
-            LOG_DBG("poped ", msg);
 
             return msg;
         }

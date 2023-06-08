@@ -9,7 +9,7 @@ namespace jj {
 
     [[nodiscard]] auto checked(std::string const& address) -> std::string;
 
-    [[nodiscard]] auto is_correct(std::string const& address) noexcept -> bool;
+    [[nodiscard]] auto is_correct(std::string const& address) -> bool;
 
     class Address {
 
@@ -36,7 +36,6 @@ namespace jj {
             return addr.address_;
         }
 
-        // TODO: remove if supprot format
         friend inline auto operator << (std::ostream& os, Address const& addr) -> std::ostream& {
             return os << to_str(addr);
         }
