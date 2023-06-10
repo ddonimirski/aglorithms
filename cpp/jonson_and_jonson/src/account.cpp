@@ -23,11 +23,6 @@ namespace jj
         for (auto const& pattern: conf_.spam_patterns_) { add_spam(pattern); }
     }
 
-
-    [[nodiscard]] auto Account::create(AccountConf && conf) -> std::shared_ptr<Account> {
-        return std::shared_ptr<Account>(new Account{std::move(conf)});
-    }
-
     void Account::raw_send(std::string const& prefix, Message&& msg) const {
 
         LOG_DBG(prefix, msg);
@@ -80,7 +75,6 @@ namespace jj
 
         if (is_blocked(*msg.from_)) {
             LOG_SEC("blocked address");
-            sec_forward(prefix, msg, "|blocked address");
             return;
         }
 
@@ -107,7 +101,7 @@ namespace jj
                 .address_ = sec::address(),
                 .from_ = address(),
                 .body_ = to_sec_body(prefix, msg, reason)
-                });
+            });
     }
 
     void Account::add_contact(Address && addr) {
@@ -118,9 +112,6 @@ namespace jj
         if (addr != sec::address()) {
             conf_.blocked_address_.insert(addr);
         }
-        else {
-            LOG_WAR("sec address can't be blocked");
-        }
     }
 
     auto Account::is_blocked(Address const& addr) -> bool {
@@ -129,10 +120,8 @@ namespace jj
     }
 
     void Account::add_pattern(std::string const& pattern) {
-        LOG_DBG("raw pattern ", pattern);
         for (auto value: { 0x41, 0xE2 }) {
             auto cypher_pattern = cypher_text(pattern, value);
-            LOG_DBG("add pattern to trie (", value, ") ", cypher_pattern);
             trie_patterns_.insert(cypher_pattern);
         }
     }
@@ -147,25 +136,6 @@ namespace jj
 
     auto Account::is_spam(Message const& msg) -> bool {
         return !trie_spam_patterns_.parse_text(msg.body_).empty();
-    }
-
-    // accessor for Manager
-    void Account::receive_item_from_queue() {
-        std::visit([this](auto&& item) {
-                using T = std::decay_t<decltype(item)>;
-                if constexpr (std::is_same_v<T, jj::Pattern>) {
-                    LOG_DBG("received pattern ", item.pattern_);
-                    add_pattern(item.pattern_);
-                }
-                else if constexpr (std::is_same_v<T, jj::Blocked>) {
-                    LOG_DBG("recieved blocked address ", item.address_);
-                    add_blocked(item.address_);
-                }
-                else {
-                    LOG_DBG("recieved msg ", item);
-                    receive(std::forward<Message>(item));
-                }
-         }, conf_.queue_->pop());
     }
 
 } // namespace jj

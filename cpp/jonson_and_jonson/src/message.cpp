@@ -17,20 +17,6 @@ namespace jj {
         return ss.str();
     }
 
-    auto is_spam(Message const& msg) -> bool {
-
-        static auto trie_spam = []() {
-            aho_corasick::trie trie;
-            trie.insert("discount");
-            trie.insert("inheritance");
-            trie.insert("lottery");
-
-            return trie;
-        }();
-
-        return !trie_spam.parse_text(msg.body_).empty();
-    }
-
     auto operator << (std::ostream& os, Message const& msg) -> std::ostream& {
         return os << to_str(msg);
     }

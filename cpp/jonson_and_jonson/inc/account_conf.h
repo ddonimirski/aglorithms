@@ -15,8 +15,9 @@ namespace jj {
     struct AccountConf
     {
         Address address_;
-        std::shared_ptr<Queue<QueueItem>> queue_ = std::make_shared<Queue<QueueItem>>();
         std::function<void(Message&&)> sender_ = {};
+        std::function<Message()> receive_ = {};
+
         std::unordered_set<Address> blocked_address_ = {};
         std::vector<std::string> malware_patterns_ = {};
         std::vector<std::string> spam_patterns_ = { "discount", "inheritance", "lottery" };

@@ -2,7 +2,7 @@
 
 using namespace jj;
 
-TEST_F(test_Account, create)
+TEST_F(test_Account, send)
 {
     auto msg = Message{
                     .address_ = Address{"json@ext.com"},

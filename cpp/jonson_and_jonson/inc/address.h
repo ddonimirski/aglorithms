@@ -15,7 +15,6 @@ namespace jj {
 
         std::string address_;
 
-
         public:
 
         Address(std::string && address): address_{checked(std::move(address))} {}

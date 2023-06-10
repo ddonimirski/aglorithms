@@ -13,6 +13,7 @@
 
 namespace jj {
 
+
     void Manager::create_account(AccountConf&& conf) {
 
          auto const address = conf.address_;
@@ -20,34 +21,10 @@ namespace jj {
          if (accounts_.find(address) == accounts_.end())
          {
              LOG_DBG("create account for ", address);
-
-             auto new_queue = std::make_shared<Queue<QueueItem>>();
-             conf.queue_ = new_queue;
-
-             if (!conf.sender_) {
-                 conf.sender_ = [this](Message&& msg) {
-                     send_to(std::move(msg));
-                 };
-             }
-
-             auto new_account = Account::create(std::move(conf));
-
-             auto thread_runner = [account = new_account]() {
-                    LOG_DBG("start runner ", account->conf_.address_);
-                    while(true) {
-                        account->receive_item_from_queue();
-                    }
-                    LOG_DBG("end runner ", account->conf_.address_);
-             };
-
-             accounts_.emplace(
-                     address,
-                     Item {
-                        .account_ = new_account,
-                        .thread_ = std::thread(thread_runner)
-                    });
-
-             accounts_.at(address).thread_.detach(); // TODO consider join and the Manager destruction ?
+             accounts_.emplace(address, Item::create(std::move(conf)));
+         }
+         else {
+            (void)std::move(conf);
          }
     }
 
@@ -57,7 +34,7 @@ namespace jj {
             if (address == sec::address()) {
                 continue;
             }
-            item.account_->push_to_queue(Pattern{.pattern_ = pattern});
+            item->push_to_queue(Pattern{.pattern_ = pattern});
         }
     }
 
@@ -67,7 +44,7 @@ namespace jj {
             if (address == sec::address()) {
                 continue;
             }
-            item.account_->push_to_queue(Blocked{.address_ = Address(pattern)});
+            item->push_to_queue(Blocked{.address_ = Address(pattern)});
         }
     }
 
@@ -75,16 +52,26 @@ namespace jj {
 
         auto const address = msg.address_;
 
-        if (auto item = accounts_.find(address); item != accounts_.end()) {
-            LOG_DBG("push ", msg);
-            item->second.account_->push_to_queue(std::move(msg));
+        if (accounts_.find(address) == accounts_.end()) {
+            LOG_DBG("account with address ", address, " doesn't exist");
+            create_account(AccountConf{ .address_ = address });
         }
-        else {
-            LOG_DBG("account with address ", msg.address_, " doesn't exist");
-            auto sender = [this](Message&& msg) { send_to(std::move(msg)); };
-            create_account(AccountConf{ .address_ = address, .sender_ = sender});
-            accounts_.at(address).account_->push_to_queue(std::move(msg));
+
+        LOG_DBG("push ", msg);
+        accounts_.at(address)->push_to_queue(std::move(msg));
+    }
+
+
+    Manager::~Manager() {
+        for (auto& [address, account]: accounts_) {
+            LOG_DBG("stop request for ", address);
+            account->stop();
         }
+    }
+
+    Manager::Manager() {
+        // create security account
+        create_account(AccountConf{ .address_ = sec::address() });
     }
 }
 

@@ -7,7 +7,7 @@
 
 
 #ifndef LOG_LEVEL
-auto constexpr DEFAULT_LOG_LEVEL = "DBG";
+auto constexpr DEFAULT_LOG_LEVEL = "MSG";
 #else
 auto constexpr DEFAULT_LOG_LEVEL = #LOG_LEVEL;
 #endif

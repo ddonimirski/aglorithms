@@ -12,7 +12,8 @@
 
 namespace jj {
 
-    class Account final : public std::enable_shared_from_this<Account>  {
+    // class Account final : public std::enable_shared_from_this<Account>  {
+    class Account final {
 
         // for withebox testing fixture
         friend class AccountTest;
@@ -21,9 +22,6 @@ namespace jj {
         std::unordered_set<Address> address_book_;
         aho_corasick::trie trie_patterns_;
         aho_corasick::trie trie_spam_patterns_;
-
-        Account(AccountConf && conf);
-        Account() = delete;
 
         void forward(Message &&) const;
 
@@ -37,30 +35,31 @@ namespace jj {
 
         auto is_spam(Message const& msg) -> bool;
 
+        // protected:
+        // // TODO consider use inheritance to avoid sync protection
+        public:
+
         void add_spam(std::string const& pattern);
-        
+
         void receive(Message &&);
 
         void add_blocked(Address const& addr);
 
         void add_pattern(std::string const& pattern);
 
-        // accessors for Manager
-        friend class Manager;
-
-        void receive_item_from_queue();
-
-        void push_to_queue(QueueItem&& item) { conf_.queue_->push(std::move(item)); }
+        void set_sender(std::function<void(Message&&)> sender) {
+            conf_.sender_ = sender;
+        }
 
         public:
 
-        Account(Account const&) = default;
-        Account(Account &&) = default;
-        Account& operator = (Account const&) = default;
-        Account& operator = (Account &&) = default;
+        Account() = delete;
+        Account(AccountConf && conf);
+        Account(Account const&) = delete;
+        Account(Account &&) = delete;
+        Account& operator = (Account const&) = delete;
+        Account& operator = (Account &&) = delete;
         ~Account() = default;
-
-        [[nodiscard]] static auto create(AccountConf && conf) -> std::shared_ptr<Account> ;
 
         void send(Message &&);
         void send(Message const& msg) { send(Message{msg}); }
@@ -72,10 +71,7 @@ namespace jj {
         void add_contact(Address const& addr) { add_contact(Address{addr}); }
         void add_contact(std::string const& addr) { add_contact(Address{addr}); }
 
-        auto getptr() -> std::shared_ptr<Account> { return shared_from_this(); }
-
         auto address() const -> Address const& { return conf_.address_; }
-
     };
 
 } // namespace jj

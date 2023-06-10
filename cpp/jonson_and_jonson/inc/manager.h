@@ -12,24 +12,23 @@
 #include <thread>
 #include <sec_email.h>
 #include <log.h>
+#include <manager_item.h>
 
 namespace jj {
 
-        struct Manager final {
+        class Manager final {
 
-            struct Item {
-                std::shared_ptr<Account> account_;
-                std::thread thread_;
-            };
+            public:
 
-            std::unordered_map<Address, Item> accounts_ = {};
 
-            Manager() {
-                // create security account
-                create_account(AccountConf{ 
-                        .address_ = sec::address(),
-                        .sender_ = [this](Message&& msg) { send_to(std::move(msg)); } });
-            }
+            std::unordered_map<Address, std::shared_ptr<Item>> accounts_ = {};
+
+            public:
+
+            Manager();
+            Manager(Manager&&) = delete;
+            Manager(Manager const&) = delete;
+            ~Manager();
 
             void create_account(AccountConf&& conf);
 
