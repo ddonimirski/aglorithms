@@ -11,7 +11,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
-set(CMAKE_CXX_CLANG_TIDY clang-tidy)
+#set(CMAKE_CXX_CLANG_TIDY clang-tidy)
 
 if (MSVC)
     add_compile_options(/W4)
@@ -59,6 +59,7 @@ if (ENABLE_UNIT_TESTS)
         PRIVATE
             gtest_main
             gtest
+            gmock
             pthread
             jj_email_srv 
         )

@@ -30,3 +30,22 @@ TEST(test_Message, to_str)
         ASSERT_EQ(to_str(msgs[i]), expected[i]);
     }
 }
+
+TEST(test_Message, ostream_operator)
+{
+    Message const msgs[] = {
+        { .address_ = sec::address(), .body_ = "message for secuirity"},
+        { .address_ = "john.nash@example.com", .body_ = "message for john" }
+    };
+
+    std::string const expected[] {
+        tt::to_msg({ .address_ = sec::address(), .body_ = "message for secuirity"}),
+        tt::to_msg({ .address_ = "john.nash@example.com", .body_ = "message for john" })
+    };
+
+    for (int i = 0; i < size(msgs); ++i) {
+        std::stringstream ss;
+        ss << msgs[i];
+        ASSERT_EQ(ss.str(), expected[i]);
+    }
+}

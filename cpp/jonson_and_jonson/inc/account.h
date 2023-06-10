@@ -14,7 +14,8 @@ namespace jj {
 
     class Account final : public std::enable_shared_from_this<Account>  {
 
-        friend class Manager;
+        // for withebox testing fixture
+        friend class AccountTest;
 
         AccountConf conf_;
         std::unordered_set<Address> address_book_;
@@ -37,8 +38,16 @@ namespace jj {
         auto is_spam(Message const& msg) -> bool;
 
         void add_spam(std::string const& pattern);
+        
+        void receive(Message &&);
+
+        void add_blocked(Address const& addr);
+
+        void add_pattern(std::string const& pattern);
 
         // accessors for Manager
+        friend class Manager;
+
         void receive_item_from_queue();
 
         void push_to_queue(QueueItem&& item) { conf_.queue_->push(std::move(item)); }
@@ -53,25 +62,21 @@ namespace jj {
 
         [[nodiscard]] static auto create(AccountConf && conf) -> std::shared_ptr<Account> ;
 
-        auto getptr() -> std::shared_ptr<Account> { return shared_from_this(); }
-
         void send(Message &&);
         void send(Message const& msg) { send(Message{msg}); }
-        void send(std::string const& addr, std::string const& msg);
-
-        void receive(Message &&);
+        void send(std::string const& addr, std::string const& body) {
+            send(Message{ .address_ = Address{addr}, .body_ = body });
+        }
 
         void add_contact(Address &&);
         void add_contact(Address const& addr) { add_contact(Address{addr}); }
         void add_contact(std::string const& addr) { add_contact(Address{addr}); }
 
-        void add_blocked(Address const& addr);
-        void add_blocked(Blocked const& addr);
+        auto getptr() -> std::shared_ptr<Account> { return shared_from_this(); }
 
-        void add_pattern(std::string const& pattern);
-        void add_pattern(Pattern const& pattern);
+        auto address() const -> Address const& { return conf_.address_; }
+
     };
-
 
 } // namespace jj
 

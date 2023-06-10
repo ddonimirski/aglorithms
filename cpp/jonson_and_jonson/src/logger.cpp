@@ -7,7 +7,7 @@
 
 
 #ifndef LOG_LEVEL
-auto constexpr DEFAULT_LOG_LEVEL = "MSG";
+auto constexpr DEFAULT_LOG_LEVEL = "DBG";
 #else
 auto constexpr DEFAULT_LOG_LEVEL = #LOG_LEVEL;
 #endif
@@ -29,29 +29,9 @@ namespace jj::log {
         // NOLINTEND
     }
 
-    auto Logger::level() -> LogLevel
-    {
-        return current_log_level_;
-    }
-
-    auto Logger::filename() -> std::string const&
-    {
-        return log_filename_;
-    }
-
-    void Logger::level(LogLevel level)
-    {
-        current_log_level_ = level;
-    }
-
-    void Logger::filename(std::string const& filename)
-    {
-        log_filename_ = filename;
-    }
-
     void Logger::write_to_log(LogMsg && msg) {
 
-        if (static_cast<int>(msg.level_) <=  static_cast<int>(level())) {
+        if (static_cast<int>(msg.level_) <=  static_cast<int>(current_log_level_)) {
 
             std::lock_guard<std::mutex> lock(log_mtx_);
 
@@ -63,7 +43,6 @@ namespace jj::log {
             std::cerr << ss.str() << std::endl;
 
             static std::ofstream log_file(DEFAULT_LOG_FILENAME);
-
             log_file << ss.str() << std::endl;
         }
     }

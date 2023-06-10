@@ -40,5 +40,12 @@ int main() {
             .body_ = cypher_text(malware, 0x41)
             });
 
+    manager.send_to(Message{
+            .address_ = addr1,
+            .from_ = addr2,
+            .body_ = "hello again"
+            });
+
+
     (void)getchar();
 }

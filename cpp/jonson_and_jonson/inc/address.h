@@ -55,4 +55,5 @@ struct std::hash<jj::Address>
     }
 };
 
+
 #endif // JJ_ADDRESS_H_

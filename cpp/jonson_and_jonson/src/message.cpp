@@ -35,4 +35,10 @@ namespace jj {
         return os << to_str(msg);
     }
 
+    auto operator == (Message const& msg1, Message const msg2) -> bool {
+        return msg1.address_ == msg2.address_
+            && msg1.body_ == msg2.body_
+            && (msg1.from_ && msg2.from_ ? *msg1.from_ == *msg2.from_: !msg2.from_ && !msg1.from_);
+    }
+
 } // namespace jj

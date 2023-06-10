@@ -22,19 +22,20 @@ namespace jj {
                 std::thread thread_;
             };
 
-
-            std::unordered_map<Address, Item> map_ = {};
+            std::unordered_map<Address, Item> accounts_ = {};
 
             Manager() {
                 // create security account
-                create_account(AccountConf{ .address_ = sec::address(), .sender_ = [this](Message&& msg) { send_to(std::move(msg)); } });
+                create_account(AccountConf{ 
+                        .address_ = sec::address(),
+                        .sender_ = [this](Message&& msg) { send_to(std::move(msg)); } });
             }
 
             void create_account(AccountConf&& conf);
 
             void notify_pattern(std::string const& pattern);
 
-            void notify_blocked(std::string const& pattern);
+            void broadcast_blocked(std::string const& pattern);
 
             void send_to(Message&& msg);
 

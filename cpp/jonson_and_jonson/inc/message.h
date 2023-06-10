@@ -20,6 +20,9 @@ namespace jj
 
     auto operator << (std::ostream& os, Message const& msg) -> std::ostream&;
 
+    // for mock compering
+    auto operator == (Message const& msg1, Message const msg2) -> bool;
+
 } // namespace jj
 
 #endif // JJ_MESSAGE_H_

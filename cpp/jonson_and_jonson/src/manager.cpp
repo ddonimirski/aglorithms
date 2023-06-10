@@ -17,7 +17,7 @@ namespace jj {
 
          auto const address = conf.address_;
  
-         if (map_.find(address) == map_.end())
+         if (accounts_.find(address) == accounts_.end())
          {
              LOG_DBG("create account for ", address);
 
@@ -40,20 +40,20 @@ namespace jj {
                     LOG_DBG("end runner ", account->conf_.address_);
              };
 
-             map_.emplace(
+             accounts_.emplace(
                      address,
                      Item {
                         .account_ = new_account,
                         .thread_ = std::thread(thread_runner)
                     });
 
-             map_.at(address).thread_.detach(); // TODO consider join and the Manager destruction ?
+             accounts_.at(address).thread_.detach(); // TODO consider join and the Manager destruction ?
          }
     }
 
     // function add pattern to all actors
     void Manager::notify_pattern(std::string const& pattern) {
-        for (auto & [address, item]: map_) {
+        for (auto & [address, item]: accounts_) {
             if (address == sec::address()) {
                 continue;
             }
@@ -61,8 +61,9 @@ namespace jj {
         }
     }
 
-    void Manager::notify_blocked(std::string const& pattern) {
-        for (auto & [address, item]: map_) {
+    // broadcast a blocked address
+    void Manager::broadcast_blocked(std::string const& pattern) {
+        for (auto & [address, item]: accounts_) {
             if (address == sec::address()) {
                 continue;
             }
@@ -74,18 +75,15 @@ namespace jj {
 
         auto const address = msg.address_;
 
-        if (auto item = map_.find(address); item != map_.end()) {
+        if (auto item = accounts_.find(address); item != accounts_.end()) {
             LOG_DBG("push ", msg);
             item->second.account_->push_to_queue(std::move(msg));
         }
         else {
             LOG_DBG("account with address ", msg.address_, " doesn't exist");
-
             auto sender = [this](Message&& msg) { send_to(std::move(msg)); };
-
             create_account(AccountConf{ .address_ = address, .sender_ = sender});
-
-            map_.at(address).account_->push_to_queue(std::move(msg));
+            accounts_.at(address).account_->push_to_queue(std::move(msg));
         }
     }
 }

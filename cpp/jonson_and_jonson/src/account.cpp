@@ -28,13 +28,12 @@ namespace jj
         return std::shared_ptr<Account>(new Account{std::move(conf)});
     }
 
-
     void Account::raw_send(std::string const& prefix, Message&& msg) const {
 
         LOG_DBG(prefix, msg);
 
         if (!conf_.sender_) {
-            LOG_ERR("Account ", conf_.address_," doesn't have sender");
+            LOG_ERR("Account ", address()," doesn't have sender");
             throw std::runtime_error("sender not set");
         }
 
@@ -64,7 +63,7 @@ namespace jj
             return;
         }
 
-        msg.from_ = conf_.address_;
+        msg.from_ = address();
         raw_send(prefix, std::move(msg));
     }
 
@@ -106,7 +105,7 @@ namespace jj
     void Account::sec_forward(std::string const& prefix, Message const& msg, std::string const& reason) {
         forward(Message{
                 .address_ = sec::address(),
-                .from_ = conf_.address_,
+                .from_ = address(),
                 .body_ = to_sec_body(prefix, msg, reason)
                 });
     }
