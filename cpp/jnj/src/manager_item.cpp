@@ -7,7 +7,7 @@ namespace jj {
         LOG_DBG("create item for ", account_.address());
 
         LOG_DBG("set sender", account_.address());
-        auto sender = [this](Message&& msg) -> void { queue_->push(std::move(msg)); };
+        auto sender = [this](Message&& msg) -> void { push_to_queue(std::move(msg)); };
         account_.set_sender(sender);
 
         LOG_DBG("create receiver_ for ", account_.address());
@@ -25,7 +25,7 @@ namespace jj {
 
     Item::~Item() {
         LOG_DBG(account_.address());
-        if (!queue_->stopped()) {
+        if (!queue_.stopped()) {
             stop();
         }
         receiver_.join();
@@ -33,7 +33,7 @@ namespace jj {
 
     void Item::receive_item_from_queue() {
 
-        if (auto msg = queue_->pop(); msg) {
+        if (auto msg = queue_.pop(); msg) {
             std::visit([this]([[maybe_unused]]auto&& msg) {
                     using T = std::decay_t<decltype(msg)>;
                     if constexpr (std::is_same_v<T, jj::Pattern>) {
@@ -51,7 +51,7 @@ namespace jj {
 
     void Item::stop() {
         receiver_.request_stop();
-        queue_->stop();
+        queue_.stop();
     }
 
 } // namespace jj {

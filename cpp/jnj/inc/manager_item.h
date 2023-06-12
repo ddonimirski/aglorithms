@@ -15,7 +15,7 @@ namespace jj {
     class Item final : public std::enable_shared_from_this<Item>  {
 
         std::jthread receiver_;
-        std::unique_ptr<Queue<QueueItem>> queue_ = std::make_unique<Queue<QueueItem>>();
+        Queue<QueueItem> queue_ = {};
         Account account_;
 
         Item(AccountConf&& conf);
@@ -30,7 +30,7 @@ namespace jj {
 
         auto getptr() -> std::shared_ptr<Item> { return shared_from_this(); }
 
-        void push_to_queue(QueueItem&& item) { queue_->push(std::move(item)); }
+        void push_to_queue(QueueItem&& item) { queue_.push(std::move(item)); }
 
         void receive_item_from_queue();
 
